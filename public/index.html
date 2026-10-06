@@ -79,6 +79,12 @@ header{
 }
 .tab:hover{border-color:var(--accent); color:var(--accent-deep);}
 .tab.on{background:var(--accent); border-color:var(--accent); color:#fff; box-shadow:0 3px 8px rgba(201,58,43,.25);}
+.book-select{
+  border:1.5px solid var(--line); background:var(--paper); color:var(--ink);
+  padding:7px 12px; border-radius:999px; cursor:pointer; font-size:14px; font-weight:500;
+  font-family:inherit; transition:border-color .18s; max-width:150px;
+}
+.book-select:hover{border-color:var(--accent);}
 
 #lessonJump{
   margin-top:10px; padding:5px 12px; border:1.5px solid var(--line); border-radius:999px;
@@ -356,7 +362,7 @@ footer a{color:var(--accent-deep);}
         <h1>小学1-6年级写字表字卡</h1>
         <div class="sub">统编语文 · 2026秋全年级（国家中小学智慧教育平台）· 拼音 · 组词 · 笔顺动画</div>
       </div>
-      <div class="stat" id="stat"><span>12 册 <b id="cntS">0</b> 册</span><span>合计 <b id="cntT">0</b> 字</span></div>
+      <div class="stat" id="stat"><span id="cntS">—</span><span>本册 <b id="cntT">0</b> 字</span></div>
     </div>
   </div>
 </header>
@@ -370,19 +376,21 @@ footer a{color:var(--accent-deep);}
     </div>
     <div class="tabs-row">
       <div class="tabs" role="tablist" aria-label="选择册">
-        <button class="tab on" data-book="all">全部</button>
-        <button class="tab" data-book="yi_shang">一上</button>
-        <button class="tab" data-book="yi_xia">一下</button>
-        <button class="tab" data-book="er_shang">二上</button>
-        <button class="tab" data-book="er_xia">二下</button>
-        <button class="tab" data-book="san_shang">三上</button>
-        <button class="tab" data-book="san_xia">三下</button>
-        <button class="tab" data-book="si_shang">四上</button>
-        <button class="tab" data-book="si_xia">四下</button>
-        <button class="tab" data-book="wu_shang">五上</button>
-        <button class="tab" data-book="wu_xia">五下</button>
-        <button class="tab" data-book="liu_shang">六上</button>
-        <button class="tab" data-book="liu_xia">六下</button>
+        <select id="bookSel" class="book-select" aria-label="选择课本">
+          <option value="yi_shang">一年级上册</option>
+          <option value="yi_xia">一年级下册</option>
+          <option value="er_shang">二年级上册</option>
+          <option value="er_xia">二年级下册</option>
+          <option value="san_shang">三年级上册</option>
+          <option value="san_xia">三年级下册</option>
+          <option value="si_shang">四年级上册</option>
+          <option value="si_xia">四年级下册</option>
+          <option value="wu_shang">五年级上册</option>
+          <option value="wu_xia">五年级下册</option>
+          <option value="liu_shang">六年级上册</option>
+          <option value="liu_xia">六年级下册</option>
+        </select>
+        <button class="tab on" id="bookAll" type="button">全部</button>
       </div>
       <button class="dict-btn" id="dictOpen" type="button">听写</button>
       <button class="dict-btn ghost" id="pracOpenBtn" type="button">练习本</button>
@@ -584,9 +592,14 @@ const flat = [];
 CHAR_DATA.order.forEach(bk=>{
   CHAR_DATA.books[bk].lessons.forEach(([lesson, chars]) => chars.forEach(([c,p,w]) => flat.push({book:bk, lesson, c, p, w})));
 });
-document.getElementById('cntS').textContent = CHAR_DATA.order.length;
-document.getElementById('cntT').textContent = CHAR_DATA.total;
-document.getElementById('tipTotal').textContent = CHAR_DATA.total;
+function updateStat(){
+  const book = CHAR_DATA.books[state.book];
+  if(!book) return;
+  document.getElementById('cntS').textContent = CHAR_DATA.labels[state.book];
+  document.getElementById('cntT').textContent = book.count;
+  const tip = document.getElementById('tipTotal');
+  if(tip) tip.textContent = book.count;
+}
 
 /* ---------- 运行时组词补全（cnchar-words，3-6年级组词静态为空） ---------- */
 let wordsLibPromise = null;
@@ -646,14 +659,14 @@ document.addEventListener('DOMContentLoaded', ()=>{
 });
 
 /* ---------- 状态 ---------- */
-const state = { book:'all', lesson:'all', q:'' };
+const state = { book:'er_shang', lesson:'all', q:'' };
 const grid = document.getElementById('grid');
 
 function normPinyin(p){ return p.replace(/[āáǎà]/g,'a').replace(/[ēéěè]/g,'e').replace(/[īíǐì]/g,'i')
   .replace(/[ōóǒò]/g,'o').replace(/[ūúǔù]/g,'u').replace(/[ǖǘǚǜü]/g,'v').replace(/[ńňê]/g,'n'); }
 
 function matches(item){
-  if(state.book!=='all' && item.book!==state.book) return false;
+  if(item.book!==state.book) return false;
   if(state.lesson!=='all' && item.lesson!==state.lesson) return false;
   if(!state.q) return true;
   const q = state.q.trim().toLowerCase();
@@ -682,23 +695,18 @@ function cardHtml(it){
 function lessonId(l){ return 'lg-' + encodeURIComponent(l).replace(/%/g,'_'); }
 function render(){
   const items = flat.filter(matches);
-  const book = state.book==='all' ? null : CHAR_DATA.books[state.book];
-  // 下拉跳课菜单
+  const book = CHAR_DATA.books[state.book];
+  // 下拉跳课菜单：按当前册填充
   const jump = document.getElementById('lessonJump');
-  if(state.book==='all'){
-    jump.innerHTML = '<option value="all">跳转到课程…</option>';
-    jump.disabled = true;
-  } else {
-    jump.innerHTML = '<option value="all">跳转到课程…</option>'
-      + book.lessons.map(([l])=>'<option value="'+l.replace(/"/g,'&quot;')+'"'+(state.lesson===l?' selected':'')+'>'+l+'</option>').join('');
-    jump.disabled = false;
-  }
+  jump.innerHTML = '<option value="all">跳转到课程…</option>'
+    + book.lessons.map(([l])=>'<option value="'+l.replace(/"/g,'&quot;')+'"'+(state.lesson===l?' selected':'')+'>'+l+'</option>').join('');
+  jump.disabled = false;
   if(!items.length){
     grid.innerHTML = '<div class="empty">没有找到匹配的字卡，换个关键词试试吧。</div>';
     return;
   }
-  if(state.book!=='all' && !state.q){
-    // 选中某册时, 按课文分组: 每课一个标题, 下面是该课汉字
+  if(!state.q){
+    // 当前册按课文分组: 每课一个标题, 下面是该课汉字
     const byLesson = {};
     items.forEach(it=>{ (byLesson[it.lesson] = byLesson[it.lesson] || []).push(it); });
     grid.innerHTML = book.lessons.filter(([l])=>byLesson[l]).map(([l])=>{
@@ -708,21 +716,10 @@ function render(){
         + '<div class="grid">'+arr.map(cardHtml).join('')+'</div>'
         + '</section>';
     }).join('');
-  } else if(state.book==='all' && !state.q){
-    // 全部时按册分组, 每册一个标题
-    const byBook = {};
-    items.forEach(it=>{ (byBook[it.book] = byBook[it.book] || []).push(it); });
-    grid.innerHTML = CHAR_DATA.order.map(bk=>{
-      const arr = byBook[bk];
-      if(!arr) return '';
-      return '<section class="lesson-group">'
-        + '<h2 class="lesson-title"><span>'+CHAR_DATA.labels[bk]+'</span><span class="lesson-count">'+arr.length+' 字</span></h2>'
-        + '<div class="grid">'+arr.map(cardHtml).join('')+'</div>'
-        + '</section>';
-    }).join('');
   } else {
     grid.innerHTML = '<div class="grid">' + items.map(cardHtml).join('') + '</div>';
   }
+  updateStat();
   // 懒加载笔画数
   const io = new IntersectionObserver(entries=>{
     entries.forEach(e=>{
@@ -741,7 +738,7 @@ function render(){
   grid.querySelectorAll('.card').forEach(c=>io.observe(c));
 }
 function scrollToLesson(l){
-  if(!l || state.book==='all') return;
+  if(!l) return;
   const el = document.getElementById(lessonId(l));
   if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
 }
@@ -824,10 +821,21 @@ document.getElementById('q').addEventListener('input', e=>{
 document.getElementById('qClear').addEventListener('click', ()=>{
   document.getElementById('q').value=''; state.q=''; document.getElementById('qClear').classList.remove('show'); render();
 });
-document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click', ()=>{
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
-  t.classList.add('on'); state.book = t.dataset.book; state.lesson='all'; render();
-}));
+/* 全部：显示所选课本（下拉 bookSel）的全部内容；同时清除搜索与课程筛选 */
+document.getElementById('bookAll').addEventListener('click', ()=>{
+  state.lesson='all'; state.q='';
+  document.getElementById('q').value='';
+  document.getElementById('qClear').classList.remove('show');
+  render();
+});
+/* 选择课本：切换当前册并显示该册全部内容 */
+document.getElementById('bookSel').addEventListener('change', e=>{
+  state.book = e.target.value; state.lesson='all'; state.q='';
+  document.getElementById('q').value='';
+  document.getElementById('qClear').classList.remove('show');
+  try{ localStorage.setItem('zykb_book', state.book); }catch(err){}
+  render();
+});
 document.getElementById('lessonJump').addEventListener('change', e=>{
   state.lesson = e.target.value; render(); scrollToLesson(state.lesson);
 });
@@ -1524,6 +1532,18 @@ document.getElementById('mNext').addEventListener('click', ()=>{
   const next = list[(idx+1)%list.length];
   showModal(next.c+'|'+next.book+'|'+next.lesson);
 });
+
+/* 初始化：恢复上次选择的课本，默认二年级上册 */
+(function initBook(){
+  const sel = document.getElementById('bookSel');
+  let bk = 'er_shang';
+  try{
+    const saved = localStorage.getItem('zykb_book');
+    if(saved && CHAR_DATA.books[saved]) bk = saved;
+  }catch(e){}
+  state.book = bk;
+  sel.value = bk;
+})();
 
 render();
 </script>
