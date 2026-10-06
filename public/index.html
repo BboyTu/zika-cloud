@@ -1203,6 +1203,21 @@ if(AUTH.token){
     authBtnRender();
   });
 }
+/* 防浏览器把已保存的登录邮箱自动填充进搜索框：
+   Chrome 在页面含 email/password 表单时会凭据自动填充到首个文本输入框，
+   autocomplete="off" 对此无效，故加载后短期巡检，发现邮箱即清空 */
+(function(){
+  const qEl = document.getElementById('q');
+  if(!qEl) return;
+  qEl.value = '';
+  qEl.setAttribute('autocomplete', 'off');
+  let guard = 0;
+  const timer = setInterval(function(){
+    const v = qEl.value;
+    if(v && (v === AUTH.email || v.indexOf('@') >= 0)) qEl.value = '';
+    if(++guard > 8) clearInterval(timer);
+  }, 400);
+})();
 function dictRenderWrong(){
   const list = Object.keys(WRONG);
   const cnt = document.getElementById('dWrongCount');
