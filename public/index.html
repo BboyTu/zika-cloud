@@ -145,11 +145,6 @@ main{max-width:1120px; margin:0 auto; padding:4px 18px 40px;}
   font-size:11.5px; color:#7a7465; background:var(--gold-soft);
   border:1px solid #f0dfbc; border-radius:999px; padding:1px 8px;
 }
-.card .book-tag{
-  font-size:11px; color:var(--accent-deep); background:#fdf1e8;
-  border:1px dashed #e6b8a8; border-radius:999px; padding:2px 9px;
-  max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
-}
 .sr-title{
   margin:14px 2px 6px; font-size:15px; font-weight:700; color:var(--ink);
   display:flex; align-items:center; gap:8px;
@@ -700,17 +695,16 @@ function matchesCore(item){
 function matches(item){ return matchesCore(item) && item.book===state.book; }
 
 /* ---------- 渲染 ---------- */
-function cardHtml(it, withBook){
+function cardHtml(it){
   const ws = it.w || wordsOf(it.c) || [];
   const words = ws.map(w=>'<span>'+w+'</span>').join('');
   const multi = CHAR_DATA.multi ? CHAR_DATA.multi[it.c] : null;
   const pyText = multi ? multi.m.map(r=>r.p).join(' ／ ') : (it.p || '');
-  return '<button class="card'+(withBook?' out-book':'')+'" data-k="'+it.c+'" data-book="'+it.book+'" data-lesson="'+it.lesson.replace(/"/g,'&quot;')+'">'
+  return '<button class="card" data-k="'+it.c+'" data-book="'+it.book+'" data-lesson="'+it.lesson.replace(/"/g,'&quot;')+'">'
     + '<span class="big hanzi-font">'+it.c+'</span>'
     + '<span class="pyrow"><span class="py">'+pyText+'</span><span class="sound" role="button" tabindex="0" aria-label="朗读 '+it.c+'">'+SPEAKER_SVG+'</span></span>'
     + '<span class="stroke"><span class="s-num">…</span></span>'
     + '<span class="words">'+words+'</span>'
-    + (withBook ? '<span class="book-tag">'+CHAR_DATA.labels[it.book]+' · '+it.lesson+'</span>' : '')
     + '</button>';
 }
 function lessonId(l){ return 'lg-' + encodeURIComponent(l).replace(/%/g,'_'); }
@@ -727,13 +721,20 @@ function render(){
     jump.disabled = false;
   }
   if(state.q){
-    // 全册搜索：本册命中 + 其他课本命中（点击可跳转）
+    // 全册搜索：本册命中 + 其他课本命中（按来源分册分课）
     const all = flat.filter(matchesCore);
     const inCur = [], other = [];
     all.forEach(it=>{ (it.book===state.book ? inCur : other).push(it); });
     let h = '';
     if(inCur.length) h += '<h2 class="sr-title">本册命中</h2><div class="grid">'+inCur.map(cardHtml).join('')+'</div>';
-    if(other.length) h += '<h2 class="sr-title">其他课本命中</h2><div class="grid">'+other.map(it=>cardHtml(it,true)).join('')+'</div>';
+    if(other.length){
+      const bySrc = {};
+      other.forEach(it=>{ const key = it.book+'|'+it.lesson; (bySrc[key] = bySrc[key] || []).push(it); });
+      Object.keys(bySrc).forEach(key=>{
+        const [bk, ls] = key.split('|');
+        h += '<h2 class="sr-title">'+CHAR_DATA.labels[bk]+' · '+ls+'</h2><div class="grid">'+bySrc[key].map(cardHtml).join('')+'</div>';
+      });
+    }
     if(!h) h = '<div class="empty">没有找到匹配的字卡，换个关键词试试吧。</div>';
     grid.innerHTML = h;
     updateStat();
