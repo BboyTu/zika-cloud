@@ -44,8 +44,17 @@ header{
 .brand .seal span{color:#fff; font-family:"KaiTi","楷体","STKaiti","Kaiti SC",serif; font-weight:700; font-size:26px; line-height:1;}
 .brand h1{font-family:"Noto Serif SC","Songti SC",serif; font-size:20px; font-weight:900; letter-spacing:.5px;}
 .brand .sub{font-size:12px; color:var(--ink-soft); margin-top:1px;}
-.stat{margin-left:auto; display:flex; gap:10px; font-size:12px; color:var(--ink-soft);}
-.stat b{color:var(--accent-deep); font-size:14px;}
+.header-login{
+  margin-left:auto; flex:none;
+  font-family:inherit; font-size:16px; font-weight:700; letter-spacing:2px;
+  color:#fff; background:linear-gradient(145deg,#d84937,#a3281c);
+  border:1px solid #a3281c; border-radius:4px;
+  padding:9px 22px; cursor:pointer;
+  box-shadow:0 3px 8px rgba(163,40,28,.22);
+  transition:filter .15s, transform .1s;
+}
+.header-login:hover{filter:brightness(1.06);}
+.header-login:active{transform:scale(.97);}
 
 /* ===== 搜索与控制 ===== */
 .controls{max-width:1120px; margin:0 auto; padding:0 18px 14px;}
@@ -338,7 +347,8 @@ footer a{color:var(--accent-deep);}
   .brand .seal{width:40px;height:40px;}
   .brand .seal span{font-size:22px;}
   .brand h1{font-size:17px;}
-  .stat{display:none;}
+  .brand .sub{display:none;}
+  .header-login{font-size:14px; padding:7px 14px; letter-spacing:1px;}
   .controls{padding:0 14px 12px;}
   main{padding:2px 12px 32px;}
   .grid{grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); gap:10px;}
@@ -370,7 +380,7 @@ footer a{color:var(--accent-deep);}
         <h1>小学1-6年级写字表字卡</h1>
         <div class="sub">统编语文 · 2026秋全年级（国家中小学智慧教育平台）· 拼音 · 组词 · 笔顺动画</div>
       </div>
-      <div class="stat" id="stat"><span id="cntS">—</span><span>本册 <b id="cntT">0</b> 字</span></div>
+      <button class="header-login" id="authBtn" type="button">登录</button>
     </div>
   </div>
 </header>
@@ -390,7 +400,6 @@ footer a{color:var(--accent-deep);}
       <button class="dict-btn" id="dictOpen" type="button">听写</button>
       <button class="dict-btn ghost" id="pracOpenBtn" type="button">练习本</button>
       <button class="dict-btn ghost" id="wrongOpenBtn" type="button">生字本</button>
-      <button class="dict-btn ghost" id="authBtn" type="button">登录</button>
     </div>
   </div>
   <select id="lessonJump" aria-label="跳转到课程" disabled></select>
@@ -600,8 +609,6 @@ CHAR_DATA.order.forEach(bk=>{
 function updateStat(){
   const book = CHAR_DATA.books[state.book];
   if(!book) return;
-  document.getElementById('cntS').textContent = CHAR_DATA.labels[state.book];
-  document.getElementById('cntT').textContent = book.count;
   const tip = document.getElementById('tipTotal');
   if(tip) tip.textContent = book.count;
 }
