@@ -82,7 +82,8 @@ header{
 .book-select{
   border:1.5px solid var(--line); background:var(--paper); color:var(--ink);
   padding:7px 12px; border-radius:999px; cursor:pointer; font-size:14px; font-weight:500;
-  font-family:inherit; transition:border-color .18s; max-width:150px;
+  font-family:inherit; transition:border-color .18s;
+  min-width:210px; max-width:56vw;
 }
 .book-select:hover{border-color:var(--accent);}
 
@@ -141,11 +142,6 @@ main{max-width:1120px; margin:0 auto; padding:4px 18px 40px;}
 .card .words span{
   font-size:11.5px; color:#7a7465; background:var(--gold-soft);
   border:1px solid #f0dfbc; border-radius:999px; padding:1px 8px;
-}
-.card .book-tag{
-  font-size:11px; color:var(--accent-deep); background:#fdf1e8;
-  border:1px dashed #e6b8a8; border-radius:999px; padding:2px 9px;
-  max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
 }
 .sr-title{
   margin:14px 2px 6px; font-size:15px; font-weight:700; color:var(--ink);
@@ -663,6 +659,15 @@ document.addEventListener('DOMContentLoaded', ()=>{
   fillBookSelect('bookSel', 'er_shang');
   fillBookSelect('dbookSel', 'er_shang');
   fillBookSelect('pbookSel', 'er_shang');
+  /* 恢复上次选择的课本，默认二年级上册（须在填充选项之后） */
+  let saved = 'er_shang';
+  try{
+    const v = localStorage.getItem('zykb_book');
+    if(v && CHAR_DATA.books[v]) saved = v;
+  }catch(e){}
+  state.book = saved;
+  document.getElementById('bookSel').value = saved;
+  render();
   setTimeout(precomputeWords, 400);
 });
 
@@ -688,17 +693,16 @@ function matchesCore(item){
 function matches(item){ return matchesCore(item) && item.book===state.book; }
 
 /* ---------- 渲染 ---------- */
-function cardHtml(it, withBook){
+function cardHtml(it){
   const ws = it.w || wordsOf(it.c) || [];
   const words = ws.map(w=>'<span>'+w+'</span>').join('');
   const multi = CHAR_DATA.multi ? CHAR_DATA.multi[it.c] : null;
   const pyText = multi ? multi.m.map(r=>r.p).join(' ／ ') : (it.p || '');
-  return '<button class="card'+(withBook?' out-book':'')+'" data-k="'+it.c+'" data-book="'+it.book+'" data-lesson="'+it.lesson.replace(/"/g,'&quot;')+'">'
+  return '<button class="card" data-k="'+it.c+'" data-book="'+it.book+'" data-lesson="'+it.lesson.replace(/"/g,'&quot;')+'">'
     + '<span class="big hanzi-font">'+it.c+'</span>'
     + '<span class="pyrow"><span class="py">'+pyText+'</span><span class="sound" role="button" tabindex="0" aria-label="朗读 '+it.c+'">'+SPEAKER_SVG+'</span></span>'
     + '<span class="stroke"><span class="s-num">…</span></span>'
     + '<span class="words">'+words+'</span>'
-    + (withBook ? '<span class="book-tag">'+CHAR_DATA.labels[it.book]+' · '+it.lesson+'</span>' : '')
     + '</button>';
 }
 function lessonId(l){ return 'lg-' + encodeURIComponent(l).replace(/%/g,'_'); }
@@ -720,8 +724,8 @@ function render(){
     const inCur = [], other = [];
     all.forEach(it=>{ (it.book===state.book ? inCur : other).push(it); });
     let h = '';
-    if(inCur.length) h += '<h2 class="sr-title">本册命中</h2><div class="grid">'+inCur.map(it=>cardHtml(it)).join('')+'</div>';
-    if(other.length) h += '<h2 class="sr-title">其他课本命中（点击卡片可跳转）</h2><div class="grid">'+other.map(it=>cardHtml(it,true)).join('')+'</div>';
+    if(inCur.length) h += '<h2 class="sr-title">本册命中</h2><div class="grid">'+inCur.map(cardHtml).join('')+'</div>';
+    if(other.length) h += '<h2 class="sr-title">其他课本命中</h2><div class="grid">'+other.map(cardHtml).join('')+'</div>';
     if(!h) h = '<div class="empty">没有找到匹配的字卡，换个关键词试试吧。</div>';
     grid.innerHTML = h;
     updateStat();
@@ -1522,20 +1526,7 @@ grid.addEventListener('click', e=>{
     flashSound(sbtn);
     return;
   }
-  // 搜索态下命中其他课本：询问是否跳转
-  if(state.q && card.dataset.book !== state.book){
-    const it = findItem(card.dataset.k+'|'+card.dataset.book+'|'+card.dataset.lesson);
-    if(it && window.confirm('「'+it.c+'」属于 '+CHAR_DATA.labels[it.book]+' · '+it.lesson+'，要跳转过去查看吗？')){
-      state.book = it.book; state.lesson = it.lesson; state.q='';
-      document.getElementById('q').value='';
-      document.getElementById('qClear').classList.remove('show');
-      document.getElementById('bookSel').value = it.book;
-      try{ localStorage.setItem('zykb_book', it.book); }catch(err){}
-      render();
-      scrollToLesson(it.lesson);
-    }
-    return;
-  }
+  // 搜索态下命中其他课本：直接打开详情（弹窗内会显示所属册与课），不做跳转
   showModal(card.dataset.k+'|'+card.dataset.book+'|'+card.dataset.lesson);
 });
 grid.addEventListener('keydown', e=>{
@@ -1573,18 +1564,6 @@ document.getElementById('mNext').addEventListener('click', ()=>{
   const next = list[(idx+1)%list.length];
   showModal(next.c+'|'+next.book+'|'+next.lesson);
 });
-
-/* 初始化：恢复上次选择的课本，默认二年级上册 */
-(function initBook(){
-  const sel = document.getElementById('bookSel');
-  let bk = 'er_shang';
-  try{
-    const saved = localStorage.getItem('zykb_book');
-    if(saved && CHAR_DATA.books[saved]) bk = saved;
-  }catch(e){}
-  state.book = bk;
-  sel.value = bk;
-})();
 
 render();
 </script>
