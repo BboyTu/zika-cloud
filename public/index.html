@@ -46,10 +46,10 @@ header{
 .brand .sub{font-size:12px; color:var(--ink-soft); margin-top:1px;}
 .header-login{
   margin-left:auto; flex:none;
-  font-family:inherit; font-size:16px; font-weight:700; letter-spacing:2px;
+  font-family:inherit; font-size:13px; font-weight:700; letter-spacing:1px;
   color:#fff; background:linear-gradient(145deg,#d84937,#a3281c);
   border:1px solid #a3281c; border-radius:4px;
-  padding:9px 22px; cursor:pointer;
+  padding:6px 18px; cursor:pointer;
   box-shadow:0 3px 8px rgba(163,40,28,.22);
   transition:filter .15s, transform .1s;
 }
@@ -348,7 +348,7 @@ footer a{color:var(--accent-deep);}
   .brand .seal span{font-size:22px;}
   .brand h1{font-size:17px;}
   .brand .sub{display:none;}
-  .header-login{font-size:14px; padding:7px 14px; letter-spacing:1px;}
+  .header-login{font-size:12.5px; padding:6px 14px; letter-spacing:1px;}
   .controls{padding:0 14px 12px;}
   main{padding:2px 12px 32px;}
   .grid{grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); gap:10px;}
@@ -548,7 +548,7 @@ footer a{color:var(--accent-deep);}
 </main>
 
 <footer>
-  <div>数据版本：统编版 2026秋 1-6年级《写字表》（国家中小学智慧教育平台官方教材），共 12 册 2505 字。拼音、组词、部首与结构均已内置（cnchar 词典）；二年级沿用已核验静态数据。个别字目仍留待校项，欢迎指正以便更新。多音字只朗读常用读音，其余读音仅标注。</div>
+  <div>v3.24 · 数据版本：统编版 2026秋 1-6年级《写字表》（国家中小学智慧教育平台官方教材），共 12 册 2505 字。拼音、组词、部首与结构均已内置（cnchar 词典）；二年级沿用已核验静态数据。个别字目仍留待校项，欢迎指正以便更新。多音字只朗读常用读音，其余读音仅标注。</div>
   <div>笔顺动画由 <a href="https://hanziwriter.org/" target="_blank" rel="noopener">HanziWriter</a> 提供，数据来自 hanzi-writer-data；首次点击字卡需要联网加载，之后会缓存。登录后生字本可跨设备同步。</div>
 </footer>
 
@@ -602,6 +602,20 @@ const BOOK_LABELS = {
   liu_shang:'统编版语文六年级上册', liu_xia:'统编版语文六年级下册'
 };
 CHAR_DATA.order.forEach(bk=>{ CHAR_DATA.labels[bk] = BOOK_LABELS[bk] || CHAR_DATA.labels[bk]; });
+/* ---------- 各册课文名映射（写字表按课分组的标题补全，课名对照现行统编教材目录） ---------- */
+const LESSON_NAMES = {
+  yi_shang:{'识字2':'金木水火土','识字3':'口耳目手足','识字4':'日月山川','课文1':'秋天','课文2':'江南','课文3':'雪地里的小画家','课文4':'四季','识字5':'对韵歌','识字6':'日月明','识字7':'小书包','识字8':'升国旗','课文5':'小小的船','课文6':'影子','课文7':'两件宝','课文8':'比尾巴','课文9':'乌鸦喝水','课文10':'雨点儿'},
+  yi_xia:{'课文1':'春夏秋冬','课文2':'姓氏歌','课文3':'小青蛙','课文4':'猜字谜','课文5':'热爱中国共产党','课文6':'吃水不忘挖井人','课文7':'我多想去看看','课文8':'小公鸡和小鸭子','课文9':'树和喜鹊','课文10':'怎么都快乐','课文11':'静夜思','课文12':'夜色','课文13':'端午粽','识字5':'动物儿歌','识字6':'古对今','识字7':'操场上','识字8':'人之初','课文14':'古诗二首','课文15':'浪花','课文16':'荷叶圆圆','课文17':'要下雨了','课文18':'文具的家','课文19':'一分钟','课文20':'动物王国开大会','课文21':'小猴子下山','课文22':'棉花姑娘','课文23':'咕咚','课文24':'小壁虎借尾巴'},
+  san_shang:{'课文1':'大青树下的小学','课文2':'花的学校','课文4':'古诗三首','课文5':'铺满金色巴掌的水泥道','课文6':'秋天的雨','课文8':'卖火柴的小女孩','课文11':'一块奶酪','课文12':'总也倒不了的老屋','课文14':'不会叫的狗','课文15':'搭船的鸟','课文16':'金色的草地','课文17':'古诗三首','课文18':'富饶的西沙群岛','课文20':'美丽的小兴安岭','课文21':'大自然的声音','课文22':'读不完的大书','课文23':'父亲、树林和鸟','课文24':'司马光','课文25':'手术台就是阵地'},
+  san_xia:{'课文1':'古诗三首','课文2':'燕子','课文3':'荷花','课文5':'守株待兔','课文6':'陶罐和铁罐','课文7':'鹿角和鹿腿','课文9':'古诗三首','课文10':'纸的发明','课文12':'一幅名扬中外的画','课文13':'花钟','课文14':'蜜蜂','课文16':'宇宙的另一边','课文17':'我变成了一棵树','课文18':'童年的水墨画','课文19':'剃头大师','课文20':'肥皂泡','课文22':'我们奇妙的世界','课文23':'海底世界','课文24':'火烧云','课文25':'慢性子裁缝和急性子顾客','课文26':'方帽子店'},
+  si_shang:{'课文1':'观潮','课文2':'走月亮','课文4':'繁星','课文5':'一个豆荚里的五粒豆','课文6':'夜间飞行的秘密','课文8':'蝴蝶的家','课文9':'古诗三首','课文10':'爬山虎的脚','课文11':'蟋蟀的住宅','课文12':'盘古开天地','课文13':'精卫填海','课文15':'女娲补天','课文16':'麻雀','课文17':'爬天都峰','课文18':'牛和鹅','课文20':'陀螺','课文21':'古诗三首','课文23':'梅兰芳蓄须','课文24':'延安，我把你追寻','课文25':'王戎不取道旁李','课文27':'故事二则'},
+  si_xia:{'课文1':'古诗词三首','课文2':'乡下人家','课文3':'天窗','课文5':'琥珀','课文6':'飞向蓝天的恐龙','课文7':'纳米技术就在我们身边','课文9':'短诗三首','课文10':'绿','课文11':'白桦','课文13':'猫','课文14':'母鸡','课文15':'白鹅','课文16':'海上日出','课文17':'记金华的双龙洞','课文18':'文言文二则','课文19':'小英雄雨来（节选）','课文22':'古诗三首','课文23':'黄继光','课文24':'“诺曼底号”遇难记','课文26':'宝葫芦的秘密（节选）','课文27':'巨人的花园'},
+  wu_shang:{'课文1':'桂花雨','课文2':'落花生','课文4':'冀中的地道战','课文5':'将相和','课文6':'什么比猎豹的速度更快','课文7':'“诺曼底号”遇难记','课文8':'猎人海力布','课文9':'牛郎织女（一）','课文11':'古诗三首','课文12':'少年中国说（节选）','课文13':'圆明园的毁灭','课文15':'太阳','课文16':'金字塔','课文17':'慈母情深','课文18':'父爱之舟','课文20':'古诗词三首','课文21':'第一场雪','课文22':'白鹭','课文23':'古人谈读书','课文24':'忆读书'},
+  wu_xia:{'课文1':'古诗三首','课文2':'祖父的园子','课文5':'草船借箭','课文6':'景阳冈','课文9':'古诗三首','课文10':'青山处处埋忠骨','课文11':'军神','课文13':'人物描写一组','课文14':'刷子李','课文15':'自相矛盾','课文16':'田忌赛马','课文17':'跳水','课文18':'威尼斯的小艇','课文19':'牧场之国','课文21':'杨氏之子','课文22':'手指'},
+  liu_shang:{'课文1':'草原','课文2':'丁香结','课文3':'诗词三首','课文4':'七律·长征','课文5':'狼牙山五壮士','课文6':'开国大典','课文7':'我的战友邱少云','课文8':'竹节人','课文9':'宇宙生命之谜','课文11':'古代诗歌三首','课文12':'桥','课文14':'金色的鱼钩','课文15':'灯光','课文16':'盼','课文19':'十里长街送总理','课文20':'飞夺泸定桥','课文21':'囚歌','课文23':'真理诞生于一百个问号之后','课文24':'他们那时候多有趣啊'},
+  liu_xia:{'课文1':'北京的春节','课文2':'腊八粥','课文3':'古诗三首','课文5':'鲁滨逊漂流记（节选）','课文8':'匆匆','课文9':'那个星期天','课文10':'古诗三首','课文11':'十六年前的回忆','课文12':'为人民服务','课文14':'文言文二则','课文15':'真理诞生于一百个问号之后','课文16':'表里的生物'}
+};
+function lessonTitle(bk, l){ const m = LESSON_NAMES[bk] && LESSON_NAMES[bk][l]; return m ? l+' '+m : l; }
 const flat = [];
 CHAR_DATA.order.forEach(bk=>{
   CHAR_DATA.books[bk].lessons.forEach(([lesson, chars]) => chars.forEach(([c,p,w]) => flat.push({book:bk, lesson, c, p, w})));
@@ -724,7 +738,7 @@ function render(){
     jump.disabled = true;
   } else {
     jump.innerHTML = '<option value="all">跳转到课程…</option>'
-      + book.lessons.map(([l])=>'<option value="'+l.replace(/"/g,'&quot;')+'"'+(state.lesson===l?' selected':'')+'>'+l+'</option>').join('');
+      + book.lessons.map(([l])=>'<option value="'+l.replace(/"/g,'&quot;')+'"'+(state.lesson===l?' selected':'')+'>'+lessonTitle(state.book,l)+'</option>').join('');
     jump.disabled = false;
   }
   if(state.q){
@@ -739,7 +753,7 @@ function render(){
       other.forEach(it=>{ const key = it.book+'|'+it.lesson; (bySrc[key] = bySrc[key] || []).push(it); });
       Object.keys(bySrc).forEach(key=>{
         const [bk, ls] = key.split('|');
-        h += '<h2 class="sr-title">'+CHAR_DATA.labels[bk]+' · '+ls+'</h2><div class="grid">'+bySrc[key].map(cardHtml).join('')+'</div>';
+        h += '<h2 class="sr-title">'+CHAR_DATA.labels[bk]+' · '+lessonTitle(bk,ls)+'</h2><div class="grid">'+bySrc[key].map(cardHtml).join('')+'</div>';
       });
     }
     if(!h) h = '<div class="empty">没有找到匹配的字卡，换个关键词试试吧。</div>';
@@ -759,7 +773,7 @@ function render(){
   grid.innerHTML = book.lessons.filter(([l])=>byLesson[l]).map(([l])=>{
     const arr = byLesson[l];
     return '<section class="lesson-group" id="'+lessonId(l)+'">'
-      + '<h2 class="lesson-title"><span>'+l+'</span><span class="lesson-count">'+arr.length+' 字</span></h2>'
+      + '<h2 class="lesson-title"><span>'+lessonTitle(state.book,l)+'</span><span class="lesson-count">'+arr.length+' 字</span></h2>'
       + '<div class="grid">'+arr.map(cardHtml).join('')+'</div>'
       + '</section>';
   }).join('');
@@ -977,7 +991,7 @@ let pBook = 'er_shang';
 function pracRenderLessons(){
   const book = CHAR_DATA.books[pBook];
   document.getElementById('pLessons').innerHTML = book.lessons.map(([l])=>
-    '<label class="dchk"><input type="checkbox" value="'+l.replace(/"/g,'&quot;')+'"'+(pSel.has(l)?' checked':'')+'>'+l+'</label>').join('');
+    '<label class="dchk"><input type="checkbox" value="'+l.replace(/"/g,'&quot;')+'"'+(pSel.has(l)?' checked':'')+'>'+lessonTitle(pBook,l)+'</label>').join('');
   pracUpdateCount();
 }
 function pracUpdateCount(){
@@ -1286,7 +1300,7 @@ function dictRenderWrong(){
 function dictRenderLessons(){
   const book = CHAR_DATA.books[dictBook];
   document.getElementById('dLessons').innerHTML = book.lessons.map(([l])=>
-    '<label class="dchk"><input type="checkbox" value="'+l.replace(/"/g,'&quot;')+'"'+(dictSel.has(l)?' checked':'')+'>'+l+'</label>').join('');
+    '<label class="dchk"><input type="checkbox" value="'+l.replace(/"/g,'&quot;')+'"'+(dictSel.has(l)?' checked':'')+'>'+lessonTitle(dictBook,l)+'</label>').join('');
   dictUpdateCount();
 }
 function dictUpdateCount(){
