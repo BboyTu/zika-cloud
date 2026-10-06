@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>二年级写字表字卡 · 笔顺动画</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23c93a2b'/%3E%3Ctext x='32' y='46' font-size='40' text-anchor='middle' fill='%23fff' font-family='serif'%3E字%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<style>
+:root{
+  --bg:#f6f1e5; --paper:#fffdf7; --ink:#33322e; --ink-soft:#6b675c;
+  --line:#e6ddc8; --accent:#c93a2b; --accent-deep:#a3281c; --accent-soft:#f9e9e4;
+  --gold:#c9973f; --gold-soft:#f7ecd6; --green:#5d8a66; --green-soft:#e7f0e6;
+  --shadow:0 6px 18px rgba(90,70,30,.10);
+  --radius:14px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  background:var(--bg);
+  background-image:radial-gradient(circle at 10% 20%, rgba(233,190,80,.06), transparent 40%),
+                   radial-gradient(circle at 90% 80%, rgba(201,58,43,.05), transparent 40%);
+  color:var(--ink); line-height:1.5; min-height:100vh;
+}
+.hanzi-font{font-family:"KaiTi","楷体","STKaiti","Kaiti SC","AR PL UKai CN","Noto Serif SC","Songti SC","SimSun",serif; font-weight:700;}
+
+/* ===== 顶栏 ===== */
+header{
+  position:sticky; top:0; z-index:50;
+  background:rgba(255,253,247,.92); backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);
+}
+.header-inner{max-width:1120px; margin:0 auto; padding:14px 18px 10px;}
+.brand{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
+.brand .seal{
+  width:46px;height:46px;border-radius:12px;flex:none;
+  background:linear-gradient(145deg,#d84937,#a3281c);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 10px rgba(163,40,28,.28);
+}
+.brand .seal span{color:#fff; font-family:"KaiTi","楷体","STKaiti","Kaiti SC",serif; font-weight:700; font-size:26px; line-height:1;}
+.brand h1{font-family:"Noto Serif SC","Songti SC",serif; font-size:20px; font-weight:900; letter-spacing:.5px;}
+.brand .sub{font-size:12px; color:var(--ink-soft); margin-top:1px;}
+.stat{margin-left:auto; display:flex; gap:10px; font-size:12px; color:var(--ink-soft);}
+.stat b{color:var(--accent-deep); font-size:14px;}
+
+/* ===== 搜索与控制 ===== */
+.controls{max-width:1120px; margin:0 auto; padding:0 18px 14px;}
+.search-wrap{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+.search-box{flex:1 1 260px; position:relative;}
+.search-box input{
+  width:100%; padding:11px 40px 11px 42px; font-size:15px; color:var(--ink);
+  border:1.5px solid var(--line); border-radius:999px; background:var(--paper);
+  outline:none; transition:border-color .2s, box-shadow .2s;
+}
+.search-box input:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(201,58,43,.12);}
+.search-box .s-ico{position:absolute; left:15px; top:50%; transform:translateY(-50%); pointer-events:none;}
+.search-box .s-clear{
+  position:absolute; right:8px; top:50%; transform:translateY(-50%);
+  width:26px;height:26px;border-radius:50%;border:none;cursor:pointer;
+  background:#efe8d9;color:var(--ink-soft);font-size:14px;display:none;align-items:center;justify-content:center;
+}
+.search-box .s-clear.show{display:flex;}
+.search-box .s-clear:hover{background:var(--accent);color:#fff;}
+.tip{font-size:12px;color:var(--ink-soft);margin-top:6px;padding-left:4px;}
+.tip b{color:var(--accent-deep);}
+
+.tabs-row{display:flex; align-items:center; gap:10px; margin-top:12px; flex-wrap:wrap;}
+.tabs{display:flex; gap:8px;}
+.tab{
+  border:1.5px solid var(--line); background:var(--paper); color:var(--ink-soft);
+  padding:7px 18px; border-radius:999px; cursor:pointer; font-size:14px; font-weight:500;
+  transition:all .18s;
+}
+.tab:hover{border-color:var(--accent); color:var(--accent-deep);}
+.tab.on{background:var(--accent); border-color:var(--accent); color:#fff; box-shadow:0 3px 8px rgba(201,58,43,.25);}
+
+#lessonJump{
+  margin-top:10px; padding:5px 12px; border:1.5px solid var(--line); border-radius:999px;
+  background:var(--paper); color:var(--ink); font-size:12.5px; cursor:pointer;
+  max-width:250px; transition:all .15s;
+}
+#lessonJump:hover{border-color:var(--gold);}
+#lessonJump:disabled{opacity:.45; cursor:not-allowed;}
+
+/* ===== 卡片网格 ===== */
+main{max-width:1120px; margin:0 auto; padding:4px 18px 40px;}
+#grid{display:block;}
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(148px,1fr)); gap:14px;}
+.lesson-group{margin:16px 0 4px;}
+.lesson-group .lesson-title{
+  display:flex; align-items:center; gap:8px; margin:0 0 12px; padding:8px 14px;
+  font-size:14.5px; font-weight:700; color:var(--accent-deep);
+  background:linear-gradient(90deg, var(--gold-soft), transparent);
+  border-left:4px solid var(--gold); border-radius:0 10px 10px 0;
+}
+.lesson-group .lesson-title .lesson-count{
+  margin-left:auto; font-size:11px; font-weight:400; color:var(--ink-soft);
+  background:#fff; border:1px solid #f0dfbc; border-radius:999px; padding:1px 9px;
+}
+.card{
+  position:relative; text-align:center; background:var(--paper); border:1.5px solid var(--line);
+  border-radius:var(--radius); padding:18px 12px 14px; cursor:pointer;
+  transition:transform .16s, box-shadow .16s, border-color .16s;
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  min-height:168px;
+}
+.card:hover{transform:translateY(-4px); box-shadow:var(--shadow); border-color:#d8c9a6;}
+.card .big{
+  font-size:58px; font-weight:700; line-height:1.15; color:var(--ink);
+  transition:color .15s;
+}
+.card:hover .big{color:var(--accent-deep);}
+.card .py{font-size:15px; font-weight:700; color:var(--accent); letter-spacing:.5px;}
+.card .pyrow{display:flex; align-items:center; justify-content:center; gap:6px;}
+.sound{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:24px; height:24px; border-radius:50%; border:1.5px solid var(--gold);
+  background:var(--gold-soft); color:#8a6420; cursor:pointer; flex:none;
+  padding:0; user-select:none; transition:background .15s, transform .1s;
+}
+.sound:hover{background:var(--gold); color:#fff;}
+.sound:active{transform:scale(.9);}
+.sound svg{width:13px; height:13px;}
+.sound.playing{background:var(--accent); border-color:var(--accent); color:#fff;}
+.modal-head .pyrow{display:flex; align-items:center; justify-content:flex-start; gap:10px;}
+.card .stroke{font-size:12px; color:var(--ink-soft); min-height:17px;}
+.card .stroke b{color:var(--green); font-weight:700;}
+.card .words{display:flex; flex-wrap:wrap; gap:5px; justify-content:center; margin-top:2px;}
+.card .words span{
+  font-size:11.5px; color:#7a7465; background:var(--gold-soft);
+  border:1px solid #f0dfbc; border-radius:999px; padding:1px 8px;
+}
+.card .flag{position:absolute; top:8px; right:10px; font-size:11px; color:var(--gold); font-weight:700; opacity:.85;}
+.empty{
+  grid-column:1/-1; text-align:center; color:var(--ink-soft); padding:60px 0; font-size:15px;
+}
+footer{
+  max-width:1120px; margin:0 auto; padding:0 18px 30px; font-size:12px; color:var(--ink-soft);
+  border-top:1px dashed var(--line); padding-top:14px; line-height:1.8;
+}
+footer a{color:var(--accent-deep);}
+
+/* ===== 弹窗 ===== */
+#mask{
+  position:fixed; inset:0; background:rgba(46,38,24,.45); z-index:90;
+  display:none; align-items:center; justify-content:center; padding:16px;
+}
+#mask.show{display:flex;}
+#modal{
+  background:var(--paper); border-radius:20px; max-width:520px; width:100%;
+  box-shadow:0 24px 60px rgba(0,0,0,.3); overflow:hidden; animation:pop .22s ease;
+}
+@keyframes pop{from{transform:scale(.94); opacity:0;} to{transform:scale(1); opacity:1;}}
+.modal-head{
+  display:flex; align-items:center; gap:14px; padding:18px 20px 12px;
+  border-bottom:1px solid var(--line);
+}
+.modal-head .big{font-size:60px; font-weight:700; line-height:1.1; color:var(--accent-deep);}
+.modal-head .py{font-size:18px; font-weight:700; color:var(--accent);}
+.modal-head .meta{font-size:12.5px; color:var(--ink-soft); margin-top:3px;}
+#mExtra b{color:var(--accent-deep); font-weight:700;}
+.modal-head .close{
+  margin-left:auto; width:34px; height:34px; border-radius:50%; border:none; cursor:pointer;
+  background:#efe8d9; color:var(--ink-soft); font-size:16px;
+}
+.modal-head .close:hover{background:var(--accent); color:#fff;}
+.modal-body{padding:16px 20px 22px; text-align:center;}
+#writerBox{
+  width:230px; height:230px; margin:0 auto; border-radius:12px;
+  background:#fffef8;
+  background-image:
+    linear-gradient(to right, transparent calc(50% - .5px), #d9c69a calc(50% - .5px), #d9c69a calc(50% + .5px), transparent calc(50% + .5px)),
+    linear-gradient(to bottom, transparent calc(50% - .5px), #d9c69a calc(50% - .5px), #d9c69a calc(50% + .5px), transparent calc(50% + .5px)),
+    linear-gradient(45deg, transparent calc(50% - .5px), #efe4c4 calc(50% - .5px), #efe4c4 calc(50% + .5px), transparent calc(50% + .5px)),
+    linear-gradient(-45deg, transparent calc(50% - .5px), #efe4c4 calc(50% - .5px), #efe4c4 calc(50% + .5px), transparent calc(50% + .5px));
+  background-size:100% 100%, 100% 100%, 100% 100%, 100% 100%;
+  border:1.5px solid #dfd0ab;
+}
+#strokeInfo{margin-top:12px; font-size:13px; color:var(--ink-soft);}
+#strokeInfo b{color:var(--green); font-weight:700; font-size:15px;}
+.modal-words{margin-top:14px; display:flex; flex-wrap:wrap; gap:8px; justify-content:center;}
+.modal-words span{
+  font-size:13px; color:#6f6857; background:var(--gold-soft); border:1px solid #f0dfbc;
+  border-radius:8px; padding:4px 12px;
+}
+.readings{margin-top:14px; display:flex; flex-direction:column; gap:8px; text-align:left;}
+.readings .rd{
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  background:var(--gold-soft); border:1px solid #f0dfbc; border-radius:10px; padding:7px 10px;
+}
+.readings .rd-py{font-size:15px; font-weight:700; color:var(--accent-deep); min-width:44px; text-align:center;}
+.readings .rd-sound{
+  width:26px; height:26px; border:none; cursor:pointer; border-radius:50%; background:#fff;
+  color:var(--accent); display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto;
+}
+.readings .rd-sound svg{width:15px; height:15px;}
+.readings .rd-sound.playing{background:var(--accent); color:#fff;}
+.readings .rd-tag{font-size:10px; color:#fff; background:var(--green); border-radius:4px; padding:1px 6px; flex:0 0 auto;}
+.readings .rd-words{display:flex; flex-wrap:wrap; gap:6px;}
+.readings .rd-words span{
+  font-size:12.5px; color:#6f6857; background:#fff; border:1px solid #f0dfbc;
+  border-radius:999px; padding:2px 10px;
+}
+.btn-row{margin-top:16px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;}
+.btn{
+  border:none; cursor:pointer; font-size:14px; font-weight:700; border-radius:999px;
+  padding:10px 26px; color:#fff; background:var(--accent); transition:background .15s, transform .1s;
+}
+.btn:hover{background:var(--accent-deep);}
+.btn:active{transform:scale(.97);}
+.btn.ghost{background:transparent; color:var(--accent-deep); border:1.5px solid var(--accent);}
+.btn.ghost:hover{background:var(--accent-soft);}
+#netNote{font-size:12px; color:#a3782c; margin-top:10px; display:none;}
+
+/* ===== 练习本（HanZiFun 联动） ===== */
+#practice{position:fixed; inset:0; z-index:120; background:#fff; display:flex; flex-direction:column;}
+#practice[hidden]{display:none;}
+.prac-head{display:flex; align-items:center; gap:10px; padding:10px 16px; background:var(--paper); border-bottom:1.5px solid var(--line);}
+.prac-head strong{font-size:15px; color:var(--accent-deep);}
+.prac-open{margin-left:auto; font-size:12.5px; color:var(--accent-deep); text-decoration:none; border:1px solid var(--accent); border-radius:999px; padding:3px 12px;}
+.prac-open:hover{background:var(--accent-soft);}
+#practice .close{position:static; margin-left:8px;}
+#pracFrame{flex:1; width:100%; border:none; background:#fff;}
+.whead{display:flex; align-items:center; gap:10px; margin-bottom:12px; font-size:14px; color:var(--ink);}
+.whead strong{font-size:17px; color:var(--accent-deep);}
+.whead span{font-size:12.5px; color:var(--ink-soft);}
+.whead span b{color:var(--accent-deep);}
+.whead .dmini{margin-left:auto;}
+.wrong-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); gap:10px;}
+.wcard{background:#fff; border:1.5px solid var(--line); border-radius:12px; padding:10px 8px 8px; text-align:center; cursor:pointer; transition:border-color .15s;}
+.wcard:hover{border-color:var(--accent);}
+.wcard .wc-char{font-family:var(--kai); font-size:30px; color:var(--ink); line-height:1.15;}
+.wcard .wc-py{font-size:11px; color:var(--ink-soft); margin-top:3px;}
+.wcard .wc-words{font-size:10.5px; color:var(--ink-soft); margin-top:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.wcard .wc-del{display:inline-block; margin-top:6px; border:1px solid var(--line); background:transparent; color:var(--ink-soft); border-radius:999px; padding:1px 10px; font-size:11px; cursor:pointer;}
+.wcard .wc-del:hover{border-color:var(--accent); color:var(--accent);}
+.wempty{grid-column:1/-1; text-align:center; color:var(--ink-soft); font-size:13px; padding:30px 0;}
+.auth-input{width:100%; padding:10px 14px; border:1.5px solid var(--line); border-radius:10px; font-size:14px; box-sizing:border-box; background:#fff;}
+.auth-input:focus{outline:none; border-color:var(--accent);}
+.auth-err{min-height:20px; font-size:12.5px; color:var(--accent);}
+.auth-tip{font-size:13px; color:var(--ink-soft); margin:6px 0;}
+.auth-tip .link{border:none; background:none; color:var(--accent-deep); cursor:pointer; font-size:13px; text-decoration:underline; padding:0;}
+.auth-note{font-size:12px; color:var(--ink-soft); line-height:1.7; margin-bottom:10px;}
+.dict-btn.logged{border-color:var(--green); color:#4d5a32;}
+
+/* ===== 听写 ===== */
+.view[hidden]{display:none;}
+.dict-btn{
+  border:1.5px solid var(--accent); background:var(--accent); color:#fff;
+  padding:6px 18px; border-radius:999px; cursor:pointer; font-size:13px; font-weight:700;
+  transition:all .15s;
+}
+.dict-btn:hover{background:var(--accent-deep);}
+.dict-btn.ghost{background:transparent; color:var(--accent-deep); border-color:var(--accent);}
+.dict-btn.ghost:hover{background:var(--accent-soft);}
+.dict-set{
+  max-width:660px; margin:0 auto; background:var(--paper); border:1.5px solid var(--line);
+  border-radius:16px; padding:22px 24px; box-shadow:var(--shadow);
+}
+.dict-head{font-size:18px; color:var(--accent-deep); margin:0 0 16px;}
+.dset-block{margin-bottom:16px;}
+.dset-title{font-size:13px; font-weight:700; color:var(--ink); margin-bottom:8px;}
+.dset-radio{display:flex; gap:14px; flex-wrap:wrap;}
+.dset-radio label{
+  display:inline-flex; align-items:center; gap:6px; font-size:13.5px; color:var(--ink);
+  cursor:pointer; padding:5px 14px; border:1px solid var(--line); border-radius:999px; background:#fff;
+}
+.dset-radio label:has(input:checked){border-color:var(--accent); color:var(--accent-deep); font-weight:700; background:var(--accent-soft);}
+.dset-actions{display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap;}
+.dmini{border:1px solid var(--line); background:#fff; color:var(--ink-soft); padding:4px 12px; border-radius:999px; cursor:pointer; font-size:12px;}
+.dmini:hover{border-color:var(--gold); color:var(--gold);}
+.dset-count{font-size:12.5px; color:var(--ink-soft);}
+.dset-count b{color:var(--accent-deep); font-size:14px;}
+.dset-lessons{
+  display:flex; flex-wrap:wrap; gap:8px; max-height:260px; overflow:auto;
+  padding:10px 12px; border:1px solid var(--line); border-radius:12px; background:#fdfbf4;
+}
+.dchk{
+  display:inline-flex; align-items:center; gap:5px; font-size:12.5px; color:var(--ink);
+  background:#fff; border:1px solid var(--line); border-radius:999px; padding:4px 10px;
+  cursor:pointer; transition:all .12s;
+}
+.dchk:has(input:checked){border-color:var(--green); background:var(--gold-soft); color:#4d5a32; font-weight:700;}
+.dset-warn{font-size:12.5px; color:var(--accent); min-height:18px;}
+.dset-tip{font-size:12px; color:var(--ink-soft); line-height:1.7;}
+.dset-tip b{color:var(--accent-deep);}
+.dict-run{max-width:660px; margin:0 auto; text-align:center;}
+.drun-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; font-size:13px; color:var(--ink-soft);}
+.drun-prog{font-weight:700; color:var(--accent-deep); font-size:15px;}
+.drun-lesson{font-size:12.5px;}
+.drun-big{
+  width:220px; height:220px; margin:0 auto; border-radius:14px; background:#fffef8;
+  background-image:
+    linear-gradient(to right, transparent calc(50% - .5px), #d9c69a calc(50% - .5px), #d9c69a calc(50% + .5px), transparent calc(50% + .5px)),
+    linear-gradient(to bottom, transparent calc(50% - .5px), #d9c69a calc(50% - .5px), #d9c69a calc(50% + .5px), transparent calc(50% + .5px)),
+    linear-gradient(45deg, transparent calc(50% - .5px), #efe4c4 calc(50% - .5px), #efe4c4 calc(50% + .5px), transparent calc(50% + .5px)),
+    linear-gradient(-45deg, transparent calc(50% - .5px), #efe4c4 calc(50% - .5px), #efe4c4 calc(50% + .5px), transparent calc(50% + .5px));
+  border:1.5px solid #dfd0ab;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;
+  color:var(--ink-soft);
+}
+.drun-big b{font-size:46px; color:var(--accent-deep); line-height:1;}
+.drun-hint{font-size:13px;}
+.drun-status{margin-top:14px; min-height:22px; font-size:14px; color:var(--ink); font-weight:700;}
+.drun-btns{margin-top:18px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;}
+.dset-wrong{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
+.dwrong{display:inline-flex; align-items:center; gap:2px; background:#fff; border:1px solid var(--line); border-radius:8px; padding:2px 6px 2px 10px; font-size:14px;}
+.dwrong b{font-family:var(--kai); font-size:17px; color:var(--ink);}
+.dwrong button{border:none; background:transparent; color:var(--ink-soft); cursor:pointer; font-size:15px; line-height:1; padding:2px 5px;}
+.dwrong button:hover{color:var(--accent);}
+.dempty{font-size:12px; color:var(--ink-soft);}
+.btn.on{background:var(--accent); color:#fff; border-color:var(--accent);}
+.btn.ghost.on:hover{background:var(--accent-deep);}
+
+/* ===== 响应式 ===== */
+@media (max-width:640px){
+  .header-inner{padding:12px 14px 8px;}
+  .brand .seal{width:40px;height:40px;}
+  .brand .seal span{font-size:22px;}
+  .brand h1{font-size:17px;}
+  .stat{display:none;}
+  .controls{padding:0 14px 12px;}
+  main{padding:2px 12px 32px;}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); gap:10px;}
+  .card{padding:12px 8px 10px; min-height:142px; border-radius:12px;}
+  .card .big{font-size:44px;}
+  .card .py{font-size:13px;}
+  .card .words span{font-size:10.5px; padding:1px 6px;}
+  .card .flag{top:6px; right:8px; font-size:10px;}
+  .tab{padding:6px 13px; font-size:13px;}
+  #lessonJump{max-width:100%; margin-top:8px;}
+  .dict-btn{padding:6px 14px; font-size:12.5px;}
+  .dict-set{padding:18px 16px;}
+  .drun-big{width:min(220px,64vw); height:min(220px,64vw);}
+  #modal{max-width:100%; border-radius:16px;}
+  #writerBox{width:min(230px,64vw); height:min(230px,64vw);}
+}
+@media (prefers-reduced-motion: reduce){
+  *{transition:none !important; animation:none !important;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="seal"><span>字</span></div>
+      <div>
+        <h1>二年级写字表字卡</h1>
+        <div class="sub">统编语文 · 2024修订版（2025秋 / 2026春启用）· 拼音 · 组词 · 笔顺动画</div>
+      </div>
+      <div class="stat" id="stat"><span>上册 <b id="cntS">0</b> 字</span><span>下册 <b id="cntX">0</b> 字</span><span>合计 <b id="cntT">0</b> 字</span></div>
+    </div>
+  </div>
+</header>
+
+<section class="controls">
+  <div class="search-wrap">
+    <div class="search-box">
+      <svg class="s-ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a79e8c" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input id="q" type="search" placeholder="输入汉字、拼音或词语查找，如：数、shǔ、星星" autocomplete="off">
+      <button class="s-clear" id="qClear" aria-label="清空">×</button>
+    </div>
+    <div class="tabs-row">
+      <div class="tabs" role="tablist" aria-label="选择册">
+        <button class="tab on" data-book="all">全部</button>
+        <button class="tab" data-book="shang">上册</button>
+        <button class="tab" data-book="xia">下册</button>
+      </div>
+      <button class="dict-btn" id="dictOpen" type="button">听写</button>
+      <button class="dict-btn ghost" id="pracOpenBtn" type="button">练习本</button>
+      <button class="dict-btn ghost" id="wrongOpenBtn" type="button">生字本</button>
+      <button class="dict-btn ghost" id="authBtn" type="button">登录</button>
+    </div>
+  </div>
+  <select id="lessonJump" aria-label="跳转到课程" disabled></select>
+  <div class="tip">点击拼音旁的 <b>喇叭</b> 可朗读该字读音与组词；点击字卡可查看 <b>笔顺动画</b> 与 <b>笔画数</b>；共 <b id="tipTotal">0</b> 个汉字。首次查看笔顺需联网加载。</div>
+</section>
+
+<main>
+  <div id="viewCards"><div id="grid"></div></div>
+
+  <!-- ===== 视图：听写设置 ===== -->
+  <div id="viewDictSetup" class="view" hidden>
+    <div class="dict-set">
+      <h2 class="dict-head">听写设置</h2>
+      <div class="dset-block">
+        <div class="dset-title">选择册</div>
+        <div class="dset-radio">
+          <label><input type="radio" name="dbook" value="shang" checked> 上册</label>
+          <label><input type="radio" name="dbook" value="xia"> 下册</label>
+        </div>
+      </div>
+      <div class="dset-block">
+        <div class="dset-title">选择要听写的课（可多选）</div>
+        <div class="dset-actions">
+          <button class="dmini" id="dSelAll" type="button">全选</button>
+          <button class="dmini" id="dSelNone" type="button">清空</button>
+          <span class="dset-count">已选 <b id="dCount">0</b> 字</span>
+        </div>
+        <div class="dset-lessons" id="dLessons"></div>
+      </div>
+      <div class="dset-block">
+        <div class="dset-title">生字表（听写中不会的字，可随时移除）</div>
+        <label class="dchk"><input type="checkbox" id="dWrongOn"> 听写时包含生字表（<b id="dWrongCount">0</b> 字）</label>
+        <div class="dset-wrong" id="dWrongList"></div>
+      </div>
+      <div class="dset-block">
+        <div class="dset-title">每遍间隔（秒）</div>
+        <div class="dset-radio">
+          <label><input type="radio" name="dgap" value="2"> 2 秒</label>
+          <label><input type="radio" name="dgap" value="3" checked> 3 秒</label>
+          <label><input type="radio" name="dgap" value="4"> 4 秒</label>
+        </div>
+      </div>
+      <div class="dset-block">
+        <div class="dset-tip">每个汉字连同组词朗读 <b>3 遍</b>，每遍间隔按上述设置；三遍读完停 2 秒，提示“下一个字”后自动继续。</div>
+        <div class="dset-warn" id="dStatusTip"></div>
+      </div>
+      <div class="dset-actions">
+        <button class="btn" id="dStart" type="button">开始听写</button>
+        <button class="btn ghost" id="dBack" type="button">返回字卡</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 视图：听写进行 ===== -->
+  <div id="viewDictRun" class="view" hidden>
+    <div class="dict-run">
+      <div class="drun-top">
+        <span class="drun-prog" id="dProg">第 0 / 0 字</span>
+        <span class="drun-lesson" id="dLesson"></span>
+      </div>
+      <div class="drun-big">
+        <b id="dBigNum">1</b>
+        <span class="drun-hint" id="dBigHint">准备听写…</span>
+      </div>
+      <div class="drun-status" id="dStatus"></div>
+      <div class="drun-btns">
+        <button class="btn" id="dPause" type="button">暂停</button>
+        <button class="btn ghost" id="dSkip" type="button">下一个</button>
+        <button class="btn ghost" id="dReplay" type="button">重读本字</button>
+        <button class="btn ghost" id="dWrong" type="button">加入生字表</button>
+        <button class="btn ghost" id="dExit" type="button">返回</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 视图：练习本设置 ===== -->
+  <div id="viewPracticeSetup" class="view" hidden>
+    <div class="dict-set">
+      <h2 class="dict-head">练习本设置</h2>
+      <div class="dset-block">
+        <div class="dset-title">选择册</div>
+        <div class="dset-radio">
+          <label><input type="radio" name="pbook" value="shang" checked> 上册</label>
+          <label><input type="radio" name="pbook" value="xia"> 下册</label>
+        </div>
+      </div>
+      <div class="dset-block">
+        <div class="dset-title">选择要练习的课（可多选）</div>
+        <div class="dset-actions">
+          <button class="dmini" id="pSelAll" type="button">全选</button>
+          <button class="dmini" id="pSelNone" type="button">清空</button>
+          <span class="dset-count">已选 <b id="pCount">0</b> 字</span>
+        </div>
+        <div class="dset-lessons" id="pLessons"></div>
+      </div>
+      <div class="dset-block">
+        <div class="dset-title">练习模板</div>
+        <div class="dset-radio">
+          <label><input type="radio" name="ptpl" value="trace" checked> 描红练习</label>
+          <label><input type="radio" name="ptpl" value="stroke"> 笔顺分解</label>
+          <label><input type="radio" name="ptpl" value="blank"> 空白格纸</label>
+        </div>
+      </div>
+      <div class="dset-block">
+        <div class="dset-tip">打开后自动把所选课的全部汉字带入练习本，可直接打印或导出 PDF（由 HanZiFun 提供）。</div>
+      </div>
+      <div class="dset-actions">
+        <button class="btn" id="pStart" type="button">打开练习本</button>
+        <button class="btn ghost" id="pBack" type="button">返回字卡</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 视图：生字本 ===== -->
+  <div id="viewWrong" class="view" hidden>
+    <div class="dict-set">
+      <div class="whead">
+        <strong>生字本</strong>
+        <span>共 <b id="wCount">0</b> 字</span>
+        <button class="dmini" id="wClear" type="button">清空生字本</button>
+        <button class="btn ghost" id="wBack" type="button">返回字卡</button>
+      </div>
+      <div class="wrong-grid" id="wGrid"></div>
+    </div>
+  </div>
+
+  <!-- ===== 视图：登录 / 注册 ===== -->
+  <div id="viewAuth" class="view" hidden>
+    <div class="dict-set">
+      <h2 class="dict-head" id="authTitle">登录</h2>
+      <div class="dset-block">
+        <div class="dset-title">邮箱</div>
+        <input class="auth-input" id="authEmail" type="email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="dset-block">
+        <div class="dset-title">密码</div>
+        <input class="auth-input" id="authPwd" type="password" placeholder="至少 6 位" autocomplete="current-password">
+      </div>
+      <div class="auth-err" id="authErr"></div>
+      <div class="auth-tip">没有账号？<button class="link" id="authSwitch" type="button">点这里注册</button></div>
+      <div class="auth-note">登录后，生字本会自动同步到云端，手机、平板、电脑共用同一份。</div>
+      <div class="dset-actions">
+        <button class="btn" id="authSubmit" type="button">登录</button>
+        <button class="btn ghost" id="authBack" type="button">返回字卡</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div>数据版本：统编版（2024修订）二年级上册 / 下册《写字表》——“上册”以国家教材委员会2024审定教材PDF为准；“下册”以2026春新版课课贴（250字）为基准，个别字目已用2026年当前学期知识清单交叉核对，仍留几处待校项（见交付说明），欢迎指正以便更新。多音字读音与组词依据 cnchar-poly 词典并结合新华字典核证，共标注 48 个多音字。</div>
+  <div>笔顺动画由 <a href="https://hanziwriter.org/" target="_blank" rel="noopener">HanziWriter</a> 提供，数据来自 hanzi-writer-data；首次点击字卡需要联网加载，之后会缓存。</div>
+</footer>
+
+<div id="mask" aria-hidden="true">
+  <div id="modal" role="dialog" aria-modal="true" aria-label="字卡详情">
+    <div class="modal-head">
+      <div class="big hanzi-font" id="mChar"></div>
+      <div>
+        <div class="pyrow"><span class="py" id="mPy"></span><button class="sound" id="mSound" aria-label="朗读"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg></button></div>
+        <div class="meta" id="mMeta"></div>
+        <div class="meta" id="mExtra"></div>
+      </div>
+      <button class="close" id="mClose" aria-label="关闭">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="writerBox"></div>
+      <div id="strokeInfo"></div>
+      <div id="netNote">暂时无法连接笔顺数据源，请检查网络后重试；若持续失败，可换个网络环境再打开。</div>
+      <div class="modal-words" id="mWords"></div>
+      <div class="readings" id="mReadings"></div>
+      <div class="btn-row">
+        <button class="btn" id="mReplay">再写一遍</button>
+        <button class="btn ghost" id="mPrev" title="上一个字">← 上一个</button>
+        <button class="btn ghost" id="mNext" title="下一个字">下一个 →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 练习本（HanZiFun 联动） ===== -->
+<div id="practice" role="dialog" aria-modal="true" aria-label="练习本" hidden>
+  <div class="prac-head">
+    <strong id="pracTitle">练习本</strong>
+    <a class="prac-open" id="pracOpen" href="#" target="_blank" rel="noopener">新窗口打开</a>
+    <button class="close" id="pracClose" aria-label="关闭">✕</button>
+  </div>
+  <iframe id="pracFrame" title="HanZiFun 练习本"></iframe>
+</div>
+
+<script>
+const CHAR_DATA = {"version":"2024修订版（2025秋/2026春启用）","shang":{"label":"二年级上册","lessons":[["课文1 小蝌蚪找妈妈",[["两","liǎng",["两个","两只","两边"]],["条","tiáo",["面条","一条","条件"]],["哪","nǎ",["哪里","哪儿"]],["宽","kuān",["宽大","宽广","宽阔"]],["那","nà",["那里","那么","那边"]],["短","duǎn",["短发","短小","长短"]],["孩","hái",["孩子","小孩","女孩"]],["成","chéng",["成功","成长","成为"]]]],["课文2 我是什么",[["升","shēng",["上升","升起","升级"]],["连","lián",["连接","连忙","连线"]],["起","qǐ",["起来","一起","起床"]],["海","hǎi",["大海","海水","海洋"]],["洋","yáng",["海洋","汪洋","洋气"]],["许","xǔ",["许多","也许","允许"]],["作","zuò",["作业","工作","合作"]],["办","bàn",["办法","办公","办事"]],["法","fǎ",["方法","办法","加法"]]]],["课文3 植物妈妈有办法",[["如","rú",["如果","比如","如意"]],["已","yǐ",["已经","早已"]],["经","jīng",["已经","经过","经常"]],["别","bié",["别人","分别","告别"]],["轻","qīng",["轻快","轻声","轻轻"]],["发","fā",["发现","出发","发明"]],["胆","dǎn",["胆子","大胆","胆量"]],["肚","dù",["肚子","肚皮","肚量"]],["更","gèng",["更加","更好","更多"]],["识","shí",["认识","知识","识字"]]]],["语文园地一",[["转","zhuǎn",["转身","转学","转弯"]],["夹","jiā",["夹子","夹住","夹心"]]]],["识字1 场景歌",[["处","chù",["到处","处处","住处"]],["块","kuài",["一块","石块","土块"]],["座","zuò",["座位","一座","让座"]],["园","yuán",["公园","花园","菜园"]],["群","qún",["一群","人群","群众"]],["队","duì",["队伍","队长","队员"]],["领","lǐng",["带领","红领巾","领会"]]]],["识字2 树之歌",[["树","shù",["树木","大树","树叶"]],["之","zhī",["之间","之后","之一"]],["杨","yáng",["杨树","杨柳","杨梅"]],["松","sōng",["松树","松柏","放松"]],["柏","bǎi",["柏树","松柏","柏油"]],["化","huà",["变化","文化","绿化"]],["金","jīn",["金色","金子","金黄"]],["桂","guì",["桂花","桂树","桂林"]]]],["识字3 拍手歌",[["拍","pāi",["拍手","拍打","球拍"]],["世","shì",["世界","世上","一世"]],["界","jiè",["世界","边界","眼界"]],["彩","cǎi",["彩色","精彩","彩虹"]],["丛","cóng",["丛林","草丛","花丛"]],["休","xiū",["休息","午休","休假"]],["朋","péng",["朋友","亲朋"]],["友","yǒu",["朋友","友好","友谊"]],["保","bǎo",["保护","保证","保存"]],["护","hù",["保护","爱护","护士"]]]],["识字4 田家四季歌",[["季","jì",["季节","四季","春季"]],["肥","féi",["肥大","化肥","肥胖"]],["农","nóng",["农民","农村","农田"]],["事","shì",["事情","好事","故事"]],["谷","gǔ",["谷子","稻谷","山谷"]],["体","tǐ",["身体","体育","体会"]],["虽","suī",["虽然","虽说"]],["辛","xīn",["辛苦","辛勤","辛劳"]],["苦","kǔ",["辛苦","苦瓜","吃苦"]],["初","chū",["当初","初春","起初"]]]],["语文园地二",[["丑","chǒu",["丑陋","丑小鸭","出丑"]],["诚","chéng",["诚实","真诚","诚恳"]]]],["课文4 彩虹",[["丽","lì",["美丽","秀丽","华丽"]],["提","tí",["提问","提前","提起"]],["吗","ma",["好吗","行吗","对吗"]],["圆","yuán",["圆形","圆圈","团圆"]],["哥","gē",["哥哥","表哥","大哥"]],["秋","qiū",["秋天","秋千","秋风"]],["挂","guà",["挂起","挂号","牵挂"]],["啊","a",["好啊","是啊","行啊"]]]],["课文5 去外婆家",[["宝","bǎo",["宝贝","宝贵","宝宝"]],["活","huó",["生活","活动","活泼"]],["些","xiē",["一些","有些","这些"]],["总","zǒng",["总是","总结","总共"]],["给","gěi",["送给","交给","还给"]],["诉","sù",["告诉","诉说","倾诉"]],["曲","qǔ",["歌曲","曲子","乐曲"]],["名","míng",["名字","有名","姓名"]],["香","xiāng",["香味","香甜","花香"]]]],["课文6 数星星的孩子",[["数","shǔ",["数星星","数数","数不清"]],["晚","wǎn",["晚上","夜晚","傍晚"]],["奶","nǎi",["奶奶","牛奶","奶粉"]],["您","nín",["您好","您早","您请"]],["爷","yé",["爷爷","大爷","老爷"]],["很","hěn",["很好","很多","很大"]],["变","biàn",["变化","改变","变成"]],["勺","sháo",["勺子","铁勺","汤勺"]],["张","zhāng",["张开","纸张","张望"]],["汉","hàn",["汉字","汉族","好汉"]]]],["语文园地三",[["图","tú",["图画","地图","图片"]],["泥","ní",["泥土","泥巴","水泥"]],["铁","tiě",["铁环","铁门","钢铁"]],["环","huán",["铁环","花环","环节"]]]],["课文7 古诗二首",[["依","yī",["依然","依靠","相依"]],["尽","jìn",["尽头","尽力","尽情"]],["穷","qióng",["贫穷","穷人","无穷"]],["层","céng",["一层","层次","楼层"]],["照","zhào",["照相","照亮","日照"]],["炉","lú",["火炉","炉子","香炉"]],["烟","yān",["烟花","香烟","烟雾"]],["川","chuān",["山川","四川","川流不息"]],["直","zhí",["一直","笔直","直线"]],["银","yín",["银色","银行","银子"]]]],["课文8 黄山奇石",[["仙","xiān",["仙人","仙女","神仙"]],["顶","dǐng",["山顶","头顶","顶端"]],["巨","jù",["巨大","巨人","巨变"]],["位","wèi",["一位","座位","地位"]],["闪","shǎn",["闪光","闪亮","闪电"]],["狗","gǒu",["小狗","花狗","狗熊"]],["形","xíng",["形状","形式","形体"]],["状","zhuàng",["形状","状态","状元"]]]],["课文9 日月潭",[["湖","hú",["湖水","湖泊","西湖"]],["区","qū",["地区","山区","区域"]],["胜","shèng",["胜利","名胜","取胜"]],["岛","dǎo",["小岛","海岛","岛屿"]],["弯","wān",["弯弯","弯曲","弯腰"]],["现","xiàn",["现在","出现","发现"]],["就","jiù",["就是","成就","就地"]],["外","wài",["外面","课外","窗外"]]]],["课文10 葡萄沟",[["份","fèn",["一份","年份","月份"]],["枝","zhī",["树枝","枝条","枝叶"]],["客","kè",["客人","做客","客车"]],["城","chéng",["城市","长城","进城"]],["市","shì",["城市","市场","市区"]],["孔","kǒng",["孔雀","毛孔","孔洞"]],["钉","dīng",["钉子","铁钉","图钉"]],["味","wèi",["味道","气味","香味"]]]],["语文园地四",[["号","hào",["号码","句号","口号"]],["锋","fēng",["锋利","先锋","刀锋"]]]],["课文11 坐井观天",[["观","guān",["观看","观察","参观"]],["呀","ya",["好呀","来呀","快呀"]],["答","dá",["回答","答案","问答"]],["话","huà",["说话","讲话","对话"]],["抬","tái",["抬头","抬起","抬举"]],["能","néng",["能力","才能","能干"]],["信","xìn",["相信","信心","书信"]]]],["课文12 寒号鸟",[["阵","zhèn",["一阵","阵地","阵容"]],["做","zuò",["做事","做饭","做工"]],["冻","dòng",["冷冻","冻冰","解冻"]],["第","dì",["第一","第几","次第"]],["像","xiàng",["好像","画像","像样"]],["冷","lěng",["寒冷","冷水","冷清"]],["冰","bīng",["冰块","冰冷","冰雪"]],["亮","liàng",["明亮","亮光","月亮"]]]],["课文13 我要的是葫芦",[["种","zhòng",["种树","种花","种植"]],["棵","kē",["一棵","几棵"]],["以","yǐ",["以后","以前","所以"]],["次","cì",["一次","次数","名次"]],["想","xiǎng",["想念","想法","想象"]],["邻","lín",["邻居","邻近","邻里"]],["居","jū",["居住","邻居","居民"]],["吧","ba",["好吧","去吧","走吧"]],["奇","qí",["奇怪","好奇","神奇"]],["怪","guài",["奇怪","怪事","妖怪"]]]],["语文园地五",[["货","huò",["货物","货车","百货"]],["科","kē",["科学","科技","学科"]]]],["课文14 八角楼上",[["楼","lóu",["楼房","高楼","楼梯"]],["代","dài",["代表","代替","年代"]],["穿","chuān",["穿衣","穿过","穿戴"]],["视","shì",["电视","注视","视力"]],["利","lì",["胜利","锋利","有利"]],["路","lù",["道路","马路","走路"]]]],["课文15 朱德的扁担",[["同","tóng",["同学","相同","共同"]],["志","zhì",["同志","志向","志愿"]],["军","jūn",["军人","军队","海军"]],["敌","dí",["敌人","无敌","敌对"]],["常","cháng",["经常","平常","非常"]],["非","fēi",["非常","是非","非凡"]],["每","měi",["每天","每次","每年"]],["战","zhàn",["战士","战斗","战争"]],["士","shì",["战士","士兵","护士"]],["戴","dài",["穿戴","爱戴","佩戴"]]]],["课文16 难忘的泼水节",[["难","nán",["难忘","困难","难过"]],["忘","wàng",["忘记","难忘","忘掉"]],["民","mín",["人民","民族","农民"]],["因","yīn",["因为","原因","因果"]],["理","lǐ",["道理","理由","理解"]],["串","chuàn",["一串","串门","串珠"]],["裤","kù",["裤子","长裤","短裤"]],["令","lìng",["命令","口令","号令"]]]],["课文17 刘胡兰",[["反","fǎn",["相反","反对","反正"]],["村","cūn",["村庄","农村","乡村"]],["由","yóu",["自由","由于","理由"]],["于","yú",["于是","终于","关于"]],["员","yuán",["队员","员工","演员"]],["被","bèi",["被子","被动","棉被"]],["声","shēng",["声音","叫声","大声"]],["岁","suì",["岁数","岁月","周岁"]],["消","xiāo",["消息","消灭","消失"]],["息","xī",["休息","消息","信息"]]]],["语文园地六",[["抄","chāo",["抄写","抄书","摘抄"]],["炒","chǎo",["炒菜","炒饭","翻炒"]]]],["课文18 古诗二首",[["绝","jué",["绝句","绝顶","绝妙"]],["灭","miè",["消灭","灭火","灭亡"]],["舟","zhōu",["小舟","扁舟","轻舟"]],["独","dú",["独自","独立","孤独"]],["阴","yīn",["阴天","阴凉","阴影"]],["似","sì",["似乎","相似","好似"]],["野","yě",["田野","野花","野外"]],["低","dī",["低头","高低","低下"]]]],["课文19 雾在哪里",[["论","lùn",["无论","讨论","理论"]],["船","chuán",["小船","轮船","船长"]],["猫","māo",["小猫","花猫","猫头鹰"]],["切","qiē",["切开","切菜","切片"]],["该","gāi",["应该","活该","不该"]],["散","sàn",["散步","分散","散开"]],["步","bù",["散步","跑步","进步"]],["失","shī",["消失","失去","丢失"]]]],["课文20 雪孩子",[["要","yào",["主要","需要","只要"]],["伙","huǒ",["伙伴","大伙","合伙"]],["伴","bàn",["伙伴","同伴","陪伴"]],["歌","gē",["唱歌","歌曲","歌声"]],["得","dé",["得到","得救","得意"]],["闭","bì",["关闭","闭眼","封闭"]],["忙","máng",["帮忙","急忙","忙碌"]],["谁","shuí",["是谁","谁家","谁知"]],["汽","qì",["汽车","汽水","汽油"]]]],["语文园地七",[["饥","jī",["饥饿","饥荒","饥寒"]],["饿","è",["饥饿","饿肚","饿了"]],["宁","níng",["安宁","宁静"]],["库","kù",["仓库","水库","车库"]]]],["课文21 称赞",[["拿","ná",["拿来","拿出","拿走"]],["仔","zǐ",["仔细","牛仔"]],["极","jí",["积极","北极","南极"]],["送","sòng",["送给","送别","护送"]],["椅","yǐ",["椅子","桌椅","躺椅"]],["怎","zěn",["怎么","怎样"]],["拉","lā",["拉手","拉车","拉开"]],["收","shōu",["收到","丰收","收拾"]],["接","jiē",["迎接","接受","接住"]]]],["课文22 纸船和风筝",[["纸","zhǐ",["白纸","纸张","报纸"]],["抓","zhuā",["抓住","抓紧","抓痒"]],["线","xiàn",["线团","线条","路线"]],["吵","chǎo",["吵架","吵闹","争吵"]],["但","dàn",["但是","不但","但愿"]],["受","shòu",["接受","难受","受伤"]],["句","jù",["句子","句号","造句"]],["哭","kū",["哭声","大哭","哭喊"]]]],["课文23 快乐的小河",[["游","yóu",["游戏","游泳","游玩"]],["戏","xì",["游戏","看戏","戏曲"]],["爱","ài",["爱心","可爱","爱护"]],["呢","ne",["你呢","好呢"]],["跳","tiào",["跳舞","跳高","跳远"]],["咱","zán",["咱们","咱家"]]]],["语文园地八",[["狼","láng",["狼狗","灰狼","狼群"]],["蛇","shé",["小蛇","毒蛇","蛇皮"]]]]],"count":250},"xia":{"label":"二年级下册","lessons":[["课文1 古诗二首",[["诗","shī",["古诗","诗人","诗词"]],["碧","bì",["碧绿","碧玉","碧波"]],["妆","zhuāng",["化妆","红妆","梳妆"]],["绿","lǜ",["绿色","绿草","绿豆"]],["丝","sī",["丝巾","发丝","丝瓜"]],["剪","jiǎn",["剪刀","剪开","剪纸"]],["童","tóng",["儿童","童话","童年"]],["归","guī",["回归","归来","归还"]]]],["课文2 找春天",[["冲","chōng",["冲出","冲水","冲动"]],["寻","xún",["寻找","寻人","寻常"]],["眉","méi",["眉毛","眉梢","眉目"]],["吐","tǔ",["吐丝","谈吐","吞吐"]],["闻","wén",["新闻","闻名","见闻"]],["柳","liǔ",["柳树","杨柳","柳枝"]],["荡","dàng",["飘荡","回荡","扫荡"]],["桃","táo",["桃花","桃树","桃子"]]]],["课文3 开满鲜花的小路",[["鲜","xiān",["鲜花","新鲜","鲜艳"]],["原","yuán",["原来","草原","原因"]],["叔","shū",["叔叔","大叔","叔父"]],["通","tōng",["通过","通知","通顺"]],["巧","qiǎo",["巧妙","灵巧","巧合"]],["惊","jīng",["惊喜","惊讶","吃惊"]],["礼","lǐ",["礼物","礼品","送礼"]]]],["课文4 邓小平爷爷植树",[["邓","dèng",["邓爷爷","姓邓"]],["植","zhí",["植树","种植","植物"]],["格","gé",["格外","格子","风格"]],["引","yǐn",["引人注目","引导","指引"]],["注","zhù",["注意","关注","注视"]],["满","mǎn",["满意","满满","满足"]],["休","xiū",["休息","午休","休假"]],["息","xī",["休息","消息","信息"]]]],["语文园地一",[["场","chǎng",["广场","操场","场地"]],["厅","tīng",["大厅","客厅","餐厅"]]]],["课文5 雷锋叔叔，你在哪里",[["雷","léi",["雷锋","雷声","打雷"]],["锋","fēng",["锋利","先锋","刀锋"]],["昨","zuó",["昨天","昨夜","昨晚"]],["背","bēi",["背着","背包","背负"]],["洒","sǎ",["洒水","洒落","飘洒"]],["汗","hàn",["汗水","出汗","汗珠"]],["温","wēn",["温暖","温度","温和"]],["暖","nuǎn",["温暖","暖和","暖风"]]]],["课文6 千人糕",[["桌","zhuō",["桌子","课桌","书桌"]],["尝","cháng",["品尝","尝试","尝鲜"]],["买","mǎi",["买卖","买书","买菜"]],["具","jù",["家具","农具","文具"]],["甘","gān",["甘甜","甘味","甘愿"]],["汁","zhī",["果汁","菜汁","汁水"]],["甜","tián",["甜点","甜美","香甜"]],["菜","cài",["菜园","青菜","种菜"]],["劳","láo",["劳动","辛劳","功劳"]],["应","yīng",["应该","应当","答应"]]]],["课文7 我不是最弱小的",[["弱","ruò",["弱小","软弱","微弱"]],["周","zhōu",["四周","周围","周期"]],["末","mò",["末尾","末日","期末"]],["母","mǔ",["母亲","父母","母校"]],["吸","xī",["吸收","呼吸","吸引"]],["芬","fēn",["芬芳","芬香","清芬"]],["芳","fāng",["芳香","芬芳","芳名"]],["递","dì",["传递","快递","递进"]],["勇","yǒng",["勇敢","勇气","英勇"]],["敢","gǎn",["勇敢","果敢","敢于"]]]],["语文园地二",[["程","chéng",["路程","工程","课程"]],["术","shù",["技术","算术","美术"]],["服","fú",["衣服","服装","服务"]],["务","wù",["任务","家务","服务"]]]],["识字1 神州谣",[["神","shén",["神州","精神","神奇"]],["州","zhōu",["神州","苏州","广州"]],["华","huá",["中华","华人","华丽"]],["各","gè",["各种","各位","各自"]],["族","zú",["民族","汉族","家族"]],["谊","yì",["友谊","情谊"]],["齐","qí",["整齐","一齐","齐心"]],["奋","fèn",["奋斗","兴奋","勤奋"]]]],["识字2 传统节日",[["传","chuán",["传统","传说","传播"]],["统","tǒng",["传统","统一","统计"]],["贴","tiē",["贴画","贴纸","贴近"]],["街","jiē",["街道","大街","逛街"]],["扫","sǎo",["打扫","扫地","清扫"]],["龙","lóng",["龙舟","龙年","恐龙"]],["舟","zhōu",["龙舟","小舟","轻舟"]],["艾","ài",["艾草","艾叶"]],["全","quán",["全部","全家","安全"]],["团","tuán",["团圆","团结","团队"]]]],["识字3 “贝”的故事",[["些","xiē",["一些","这些","有些"]],["甲","jiǎ",["甲鱼","指甲","甲骨文"]],["骨","gǔ",["骨头","骨骼","甲骨文"]],["决","jué",["决定","决心","解决"]],["贵","guì",["宝贵","贵重","珍贵"]],["品","pǐn",["物品","产品","礼品"]],["币","bì",["钱币","硬币","人民币"]],["与","yǔ",["与其","参与"]],["财","cái",["钱财","财富","财务"]]]],["识字4 中国美食",[["食","shí",["食物","食堂","美食"]],["茄","qié",["茄子","番茄","茄苗"]],["烤","kǎo",["烤肉","烧烤","烤火"]],["鸭","yā",["鸭子","公鸭","鸭腿"]],["煮","zhǔ",["煮饭","煮熟","煮菜"]],["鸡","jī",["小鸡","鸡蛋","鸡肉"]],["蛋","dàn",["鸡蛋","蛋糕","蛋壳"]],["饭","fàn",["做饭","米饭","吃饭"]]]],["语文园地三",[["辣","là",["辣椒","辛辣","麻辣"]],["乎","hū",["在乎","几乎","似乎"]]]],["课文8 彩色的梦",[["梦","mèng",["梦想","美梦","梦乡"]],["硬","yìng",["坚硬","强硬","硬朗"]],["铅","qiān",["铅笔","铅球","铅块"]],["盒","hé",["盒子","纸盒","铅笔盒"]],["森","sēn",["森林","阴森"]],["结","jié",["团结","结束","结合"]],["苹","píng",["苹果","苹果汁"]],["精","jīng",["精神","精明","味精"]],["灵","líng",["心灵","精灵","灵活"]],["流","liú",["流水","河流","流动"]]]],["课文9 一匹出色的马",[["妹","mèi",["妹妹","姐妹","表妹"]],["波","bō",["波纹","波浪","水波"]],["纹","wén",["波纹","花纹","指纹"]],["异","yì",["异常","奇异","异样"]],["恋","liàn",["恋恋不舍","留恋"]],["舍","shě",["舍不得","舍弃","舍得"]],["求","qiú",["要求","寻求","求救"]],["奔","bēn",["奔跑","飞奔","奔流"]]]],["课文10 枫树上的喜鹊",[["伞","sǎn",["雨伞","花伞","太阳伞"]],["阿","ā",["阿姨","阿爸","阿婆"]],["姨","yí",["阿姨","姨妈"]],["弟","dì",["弟弟","兄弟","表弟"]],["便","biàn",["方便","顺便","便利"]],["教","jiāo",["教书","教唱"]],["游","yóu",["游戏","游泳","游玩"]],["戏","xì",["游戏","看戏","戏曲"]]]],["语文园地四",[["巧","qiǎo",["巧妙","灵巧","巧合"]],["刻","kè",["立刻","刻苦","雕刻"]]]],["课文11 寓言二则",[["亡","wáng",["死亡","伤亡","亡羊补牢"]],["补","bǔ",["补充","补课","亡羊补牢"]],["牢","láo",["牢固","牢记","亡羊补牢"]],["劝","quàn",["劝说","劝告","劝导"]],["丢","diū",["丢失","丢掉","丢人"]],["住","zhù",["记住","居住","住房"]],["怎","zěn",["怎么","怎样"]],["死","sǐ",["枯死","死亡","生死"]]]],["课文12 画杨桃",[["座","zuò",["座位","让座","一座"]],["室","shì",["教室","室内","办公室"]],["排","pái",["排队","排列","安排"]],["而","ér",["而是","而且","从而"]],["实","shí",["果实","诚实","老实"]],["班","bān",["班级","班长","一班"]],["哈","hā",["哈哈大笑","哈欠","哈哈"]],["笨","bèn",["笨蛋","笨重"]]]],["课文13 小马过河",[["愿","yuàn",["愿意","心愿","愿望"]],["意","yì",["意思","同意","意见"]],["麦","mài",["麦子","小麦","麦田"]],["伯","bó",["伯伯","大伯","伯父"]],["刻","kè",["立刻","刻苦","时刻"]],["突","tū",["突然","突出","突围"]],["然","rán",["突然","然后","自然"]],["掉","diào",["掉下","掉落","忘掉"]]]],["语文园地五",[["商","shāng",["商店","商人","商量"]],["厦","shà",["大厦","高楼大厦"]],["洞","dòng",["山洞","洞口","洞穴"]],["穴","xué",["洞穴","穴位"]]]],["课文14 古诗二首",[["绝","jué",["绝句","绝顶","绝对"]],["含","hán",["包含","含义","含住"]],["岭","lǐng",["山岭","秦岭","岭南"]],["泊","bó",["停泊","泊船","漂泊"]],["吴","wú",["东吴","吴国","姓吴"]],["竟","jìng",["毕竟","竟然","究竟"]],["莲","lián",["莲花","莲叶","莲子"]],["映","yìng",["映日","倒映","放映"]]]],["课文15 雷雨",[["乌","wū",["乌云","乌黑","乌鸦"]],["黑","hēi",["黑色","黑夜","黑板"]],["沉","chén",["沉重","沉默","下沉"]],["响","xiǎng",["响声","响亮","影响"]],["新","xīn",["新鲜","新年","新闻"]],["迎","yíng",["欢迎","迎面","迎接"]],["扑","pū",["扑面","扑倒","扑灭"]]]],["课文16 要是你在野外迷了路",[["指","zhǐ",["手指","指点","指明"]],["针","zhēn",["指南针","针线","打针"]],["帮","bāng",["帮助","帮忙","帮手"]],["忠","zhōng",["忠实","忠心","忠诚"]],["导","dǎo",["向导","指导","引导"]],["永","yǒng",["永远","永久","永恒"]],["夜","yè",["黑夜","夜晚","深夜"]],["碰","pèng",["碰到","碰见","碰撞"]],["特","tè",["特别","特殊","特色"]],["积","jī",["积雪","积累","积极"]]]],["课文17 太空生活趣事多",[["航","háng",["航空","航行","航天"]],["宇","yǔ",["宇宙","宇航"]],["宙","zhòu",["宇宙"]],["使","shǐ",["使用","使者","使劲"]],["浴","yù",["浴桶","浴室","洗浴"]],["桶","tǒng",["浴桶","木桶","水桶"]]]],["语文园地六",[["馆","guǎn",["图书馆","博物馆","饭馆"]],["所","suǒ",["场所","住所","所有"]]]],["课文18 大象的耳朵",[["扇","shàn",["扇子","电扇","扇形"]],["慢","màn",["慢慢","快慢","慢车"]],["遇","yù",["遇到","相遇","遇见"]],["兔","tù",["兔子","白兔","兔年"]],["定","dìng",["一定","决定","确定"]],["病","bìng",["生病","毛病","病人"]],["每","měi",["每天","每次","每年"]],["根","gēn",["树根","根本","一根"]],["痛","tòng",["头痛","痛苦","疼痛"]]]],["课文19 蜘蛛开店",[["店","diàn",["商店","开店","书店"]],["决","jué",["决定","决心","解决"]],["付","fù",["付出","付款","应付"]],["整","zhěng",["整理","整齐","完整"]],["夫","fū",["工夫","夫人","丈夫"]],["终","zhōng",["终于","最终","始终"]],["完","wán",["完成","完全","写完"]],["期","qī",["星期","期末","日期"]],["匆","cōng",["匆忙","匆匆","匆促"]]]],["课文20 青蛙卖泥塘",[["蛙","wā",["青蛙","牛蛙","蛙泳"]],["卖","mài",["买卖","卖菜","卖力"]],["搬","bān",["搬家","搬运","搬动"]],["倒","dào",["倒是","倒水","倒影"]],["泉","quán",["泉水","清泉","喷泉"]],["砍","kǎn",["砍树","砍柴","砍倒"]],["破","pò",["破旧","打破","破坏"]],["栽","zāi",["栽树","栽花","栽种"]]]],["课文21 小毛虫",[["仿","fǎng",["仿佛","模仿","仿照"]],["佛","fú",["仿佛"]],["任","rèn",["任何","任务","责任"]],["何","hé",["任何","如何","为何"]],["纺","fǎng",["纺织","纺车","纺线"]],["织","zhī",["纺织","织布","编织"]]]],["语文园地七",[["笑","xiào",["笑话","微笑","欢笑"]],["内","nèi",["内外","内容","室内"]]]],["课文22 羿射九日",[["射","shè",["射箭","发射","照射"]],["最","zuì",["最后","最好","最大"]],["换","huàn",["交换","换衣","更换"]],["值","zhí",["值日","值班","价值"]],["苗","miáo",["禾苗","树苗","花苗"]],["弓","gōng",["弓箭","弓背","弹弓"]],["炎","yán",["炎热","炎夏","发炎"]],["此","cǐ",["从此","此时","此地"]]]],["课文23 黄帝的传说",[["忽","hū",["忽然","忽略","忽视"]],["件","jiàn",["事件","文件","零件"]],["启","qǐ",["启发","开启","启动"]],["召","zhào",["号召","召开","召集"]],["众","zhòng",["众人","群众","众多"]],["完","wán",["完成","完美","完全"]],["却","què",["冷却","退却","了却"]],["供","gōng",["供应","提供","供给"]]]],["课文24 大禹治水",[["洪","hóng",["洪水","洪亮","防洪"]],["姓","xìng",["姓名","姓氏","百姓"]],["带","dài",["带领","皮带","海带"]],["灾","zāi",["灾难","灾害","火灾"]],["必","bì",["必须","必然","必要"]],["须","xū",["必须","胡须","须要"]],["仍","réng",["仍然","仍旧"]],["继","jì",["继续","继承","相继"]],["续","xù",["继续","连续","陆续"]],["业","yè",["作业","事业","工业"]]]],["语文园地八",[["灿","càn",["灿烂","光灿"]],["烂","làn",["灿烂","破烂","腐烂"]]]]],"count":253},"total":503,"multi":{"哪":{"p":"nǎ","m":[{"p":"nǎ","w":["哪里","哪儿"]},{"p":"na","w":["天哪"]},{"p":"né","w":["哪吒"]}]},"作":{"p":"zuò","m":[{"p":"zuò","w":["作业","工作","合作"]},{"p":"zuō","w":["作坊"]}]},"别":{"p":"bié","m":[{"p":"bié","w":["别人","分别","告别"]},{"p":"biè","w":["别扭"]}]},"发":{"p":"fā","m":[{"p":"fā","w":["发现","出发","发明"]},{"p":"fà","w":["发卡","卷发","发怒穿冠"]}]},"肚":{"p":"dù","m":[{"p":"dù","w":["肚子","肚皮","肚量"]},{"p":"dǔ","w":["羊肚"]}]},"更":{"p":"gèng","m":[{"p":"gèng","w":["更加","更好","更多"]},{"p":"gēng","w":["更改"]}]},"转":{"p":"zhuǎn","m":[{"p":"zhuǎn","w":["转身","转学","转弯"]},{"p":"zhuàn","w":["转动","转圈"]}]},"处":{"p":"chù","m":[{"p":"chù","w":["到处","住处","处处"]},{"p":"chǔ","w":["并处","裁处","查处"]}]},"柏":{"p":"bǎi","m":[{"p":"bǎi","w":["柏树","松柏","柏油"]},{"p":"bó","w":["柏林"]}]},"丽":{"p":"lì","m":[{"p":"lì","w":["美丽","秀丽","华丽"]},{"p":"lí","w":["高丽","高丽参"]}]},"给":{"p":"gěi","m":[{"p":"gěi","w":["送给","交给","还给"]},{"p":"jǐ","w":["补给","给水","给养"]}]},"曲":{"p":"qǔ","m":[{"p":"qǔ","w":["歌曲","曲子","乐曲"]},{"p":"qū","w":["卷曲","曲曲折折"]}]},"数":{"p":"shǔ","m":[{"p":"shǔ","w":["数星星","数不清","倒数"]},{"p":"shù","w":["数字","数学","差数"]}]},"泥":{"p":"ní","m":[{"p":"ní","w":["泥土","泥巴","水泥"]},{"p":"nì","w":["拘泥"]}]},"尽":{"p":"jìn","m":[{"p":"jìn","w":["尽头","尽力","尽情"]},{"p":"jǐn","w":["尽量"]}]},"号":{"p":"hào","m":[{"p":"hào","w":["号码","句号","口号"]},{"p":"háo","w":["哀号","干号","号叫"]}]},"答":{"p":"dá","m":[{"p":"dá","w":["回答","答案","问答"]},{"p":"dā","w":["答应"]}]},"种":{"p":"zhòng","m":[{"p":"zhòng","w":["种树","种花","种植"]},{"p":"zhǒng","w":["种子","种类","种差"]}]},"奇":{"p":"qí","m":[{"p":"qí","w":["奇怪","好奇","神奇"]},{"p":"jī","w":["奇零","奇偶","奇数"]}]},"难":{"p":"nán","m":[{"p":"nán","w":["难忘","困难","难过"]},{"p":"nàn","w":["逃难","难民"]}]},"似":{"p":"sì","m":[{"p":"sì","w":["似乎","相似","好似"]},{"p":"shì","w":["似的"]}]},"切":{"p":"qiē","m":[{"p":"qiē","w":["切开","切菜","切片"]},{"p":"qiè","w":["亲切","急切"]}]},"散":{"p":"sàn","m":[{"p":"sàn","w":["散步","散开"]},{"p":"sǎn","w":["分散","懒散","零散"]}]},"要":{"p":"yào","m":[{"p":"yào","w":["主要","需要","只要"]},{"p":"yāo","w":["要求"]}]},"得":{"p":"dé","m":[{"p":"dé","w":["得到","得救","得意"]},{"p":"de","w":["博得","懂得","夺得"]},{"p":"děi","w":["必得","非得","总得"]}]},"宁":{"p":"níng","m":[{"p":"níng","w":["安宁","宁静"]},{"p":"nìng","w":["宁可","宁肯","宁愿"]}]},"呢":{"p":"ne","m":[{"p":"ne","w":["你呢","好呢"]},{"p":"ní","w":["呢子","呢绒","毛呢"]}]},"冲":{"p":"chōng","m":[{"p":"chōng","w":["冲出","冲水","冲动"]},{"p":"chòng","w":["冲着"]}]},"吐":{"p":"tǔ","m":[{"p":"tǔ","w":["吐丝","谈吐","吞吐"]},{"p":"tù","w":["呕吐","吐血"]}]},"鲜":{"p":"xiān","m":[{"p":"xiān","w":["鲜花","新鲜","鲜艳"]},{"p":"xiǎn","w":["鲜为人知"]}]},"场":{"p":"chǎng","m":[{"p":"chǎng","w":["广场","操场","场地"]},{"p":"cháng","w":["场院"]}]},"背":{"p":"bēi","m":[{"p":"bēi","w":["背着","背包","背负"]},{"p":"bèi","w":["后背","背书"]}]},"应":{"p":"yīng","m":[{"p":"yīng","w":["应该","应当","答应"]},{"p":"yìng","w":["应用","反应","应和"]}]},"华":{"p":"huá","m":[{"p":"huá","w":["中华","华人","华丽"]},{"p":"huà","w":["华山"]}]},"传":{"p":"chuán","m":[{"p":"chuán","w":["传统","传说","传播"]},{"p":"zhuàn","w":["别传","传记","传略"]}]},"扫":{"p":"sǎo","m":[{"p":"sǎo","w":["打扫","扫地","清扫"]},{"p":"sào","w":["扫帚"]}]},"艾":{"p":"ài","m":[{"p":"ài","w":["艾草","艾叶"]},{"p":"yì","w":["自怨自艾"]}]},"茄":{"p":"qié","m":[{"p":"qié","w":["茄子","番茄","茄苗"]},{"p":"jiā","w":["雪茄"]}]},"铅":{"p":"qiān","m":[{"p":"qiān","w":["铅笔","铅球","铅块"]},{"p":"yán","w":["铅山"]}]},"结":{"p":"jié","m":[{"p":"jié","w":["团结","结束","结合"]},{"p":"jiē","w":["结果","结实"]}]},"舍":{"p":"shě","m":[{"p":"shě","w":["舍不得","舍弃","舍得"]},{"p":"shè","w":["舍监","舍亲","瓦舍"]}]},"阿":{"p":"ā","m":[{"p":"ā","w":["阿姨","阿爸","阿婆"]},{"p":"ē","w":["阿谀"]}]},"便":{"p":"biàn","m":[{"p":"biàn","w":["方便","顺便","便利"]},{"p":"pián","w":["便人","便宜","空腹便便"]}]},"教":{"p":"jiāo","m":[{"p":"jiāo","w":["教书","教唱"]},{"p":"jiào","w":["调教","教师","有教无类"]}]},"扇":{"p":"shàn","m":[{"p":"shàn","w":["扇子","电扇","扇形"]},{"p":"shān","w":["隔扇","扑扇","扇动"]}]},"倒":{"p":"dào","m":[{"p":"dào","w":["倒是","倒水","倒影"]},{"p":"dǎo","w":["倒下","摔倒"]}]},"佛":{"p":"fú","m":[{"p":"fú","w":["仿佛"]},{"p":"fó","w":["大佛","佛像"]}]},"供":{"p":"gōng","m":[{"p":"gōng","w":["供应","提供","供给"]},{"p":"gòng","w":["供认","口供"]}]}}};
+
+/* ---------- 数据预处理 ---------- */
+const flat = [];
+CHAR_DATA.shang.lessons.forEach(([lesson, chars]) => chars.forEach(([c,p,w]) => flat.push({book:'shang', lesson, c, p, w})));
+CHAR_DATA.xia.lessons.forEach(([lesson, chars]) => chars.forEach(([c,p,w]) => flat.push({book:'xia', lesson, c, p, w})));
+document.getElementById('cntS').textContent = CHAR_DATA.shang.count;
+document.getElementById('cntX').textContent = CHAR_DATA.xia.count;
+document.getElementById('cntT').textContent = CHAR_DATA.total;
+document.getElementById('tipTotal').textContent = CHAR_DATA.total;
+
+/* ---------- 状态 ---------- */
+const state = { book:'all', lesson:'all', q:'' };
+const grid = document.getElementById('grid');
+
+function normPinyin(p){ return p.replace(/[āáǎà]/g,'a').replace(/[ēéěè]/g,'e').replace(/[īíǐì]/g,'i')
+  .replace(/[ōóǒò]/g,'o').replace(/[ūúǔù]/g,'u').replace(/[ǖǘǚǜü]/g,'v').replace(/[ńňê]/g,'n'); }
+
+function matches(item){
+  if(state.book!=='all' && item.book!==state.book) return false;
+  if(state.lesson!=='all' && item.lesson!==state.lesson) return false;
+  if(!state.q) return true;
+  const q = state.q.trim().toLowerCase();
+  if(item.c===q) return true;
+  const multi = CHAR_DATA.multi ? CHAR_DATA.multi[item.c] : null;
+  const pys = multi ? multi.m.map(r=>r.p) : [item.p];
+  if(pys.some(p=>p===q || p.toLowerCase().includes(q))) return true;
+  if(pys.some(p=>normPinyin(p).includes(normPinyin(q)))) return true;
+  return item.w.some(w => w.includes(q));
+}
+
+/* ---------- 渲染 ---------- */
+function cardHtml(it){
+  const words = it.w.map(w=>'<span>'+w+'</span>').join('');
+  const multi = CHAR_DATA.multi ? CHAR_DATA.multi[it.c] : null;
+  const pyText = multi ? multi.m.map(r=>r.p).join(' ／ ') : it.p;
+  return '<button class="card" data-k="'+it.c+'" data-book="'+it.book+'" data-lesson="'+it.lesson.replace(/"/g,'&quot;')+'">'
+    + '<span class="big hanzi-font">'+it.c+'</span>'
+    + '<span class="pyrow"><span class="py">'+pyText+'</span><span class="sound" role="button" tabindex="0" aria-label="朗读 '+it.c+'">'+SPEAKER_SVG+'</span></span>'
+    + '<span class="stroke"><span class="s-num">…</span></span>'
+    + '<span class="words">'+words+'</span>'
+    + '</button>';
+}
+function lessonId(l){ return 'lg-' + encodeURIComponent(l).replace(/%/g,'_'); }
+function render(){
+  const items = flat.filter(matches);
+  const book = CHAR_DATA[state.book==='all' ? 'shang' : state.book];
+  // 下拉跳课菜单
+  const jump = document.getElementById('lessonJump');
+  if(state.book==='all'){
+    jump.innerHTML = '<option value="all">跳转到课程…</option>';
+    jump.disabled = true;
+  } else {
+    jump.innerHTML = '<option value="all">跳转到课程…</option>'
+      + book.lessons.map(([l])=>'<option value="'+l.replace(/"/g,'&quot;')+'"'+(state.lesson===l?' selected':'')+'>'+l+'</option>').join('');
+    jump.disabled = false;
+  }
+  if(!items.length){
+    grid.innerHTML = '<div class="empty">没有找到匹配的字卡，换个关键词试试吧。</div>';
+    return;
+  }
+  if(state.book!=='all' && !state.q){
+    // 选中上册/下册时, 按课文分组: 每课一个标题, 下面是该课汉字
+    const byLesson = {};
+    items.forEach(it=>{ (byLesson[it.lesson] = byLesson[it.lesson] || []).push(it); });
+    grid.innerHTML = book.lessons.filter(([l])=>byLesson[l]).map(([l])=>{
+      const arr = byLesson[l];
+      return '<section class="lesson-group" id="'+lessonId(l)+'">'
+        + '<h2 class="lesson-title"><span>'+l+'</span><span class="lesson-count">'+arr.length+' 字</span></h2>'
+        + '<div class="grid">'+arr.map(cardHtml).join('')+'</div>'
+        + '</section>';
+    }).join('');
+  } else {
+    grid.innerHTML = '<div class="grid">' + items.map(cardHtml).join('') + '</div>';
+  }
+  // 懒加载笔画数
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const card = e.target;
+        io.unobserve(card);
+        const ch = card.dataset.k;
+        getCharData(ch).then(d=>{
+          const n = d && d.strokes ? d.strokes.length : null;
+          const box = card.querySelector('.s-num');
+          if(box && n) box.innerHTML = '共 <b>'+n+'</b> 画';
+        }).catch(()=>{});
+      }
+    });
+  }, {rootMargin:'80px'});
+  grid.querySelectorAll('.card').forEach(c=>io.observe(c));
+}
+function scrollToLesson(l){
+  if(!l || state.book==='all') return;
+  const el = document.getElementById(lessonId(l));
+  if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* ---------- CDN 镜像与数据缓存（hanzi-writer-data） ---------- */
+const MIRRORS = ['cdn.jsdelivr.net','fastly.jsdelivr.net','gcore.jsdelivr.net'];
+function fetchWithMirrors(path){
+  return new Promise((resolve,reject)=>{
+    let i = 0;
+    (function tryNext(){
+      if(i>=MIRRORS.length){ reject(new Error('all mirrors failed')); return; }
+      fetch('https://'+MIRRORS[i]+path)
+        .then(r=>{ if(!r.ok) throw new Error('http '+r.status); return r.json(); })
+        .then(resolve)
+        .catch(()=>{ i++; tryNext(); });
+    })();
+  });
+}
+const dataCache = {};
+function getCharData(ch){
+  if(dataCache[ch]) return dataCache[ch];
+  const p = fetchWithMirrors('/npm/hanzi-writer-data@2.0/'+encodeURIComponent(ch)+'.json');
+  dataCache[ch] = p;
+  return p;
+}
+let libPromise = null;
+function ensureLib(){
+  if(window.HanziWriter) return Promise.resolve();
+  if(!libPromise){
+    libPromise = new Promise((resolve,reject)=>{
+      let i = 0;
+      (function tryNext(){
+        if(i>=MIRRORS.length){ reject(new Error('lib load failed')); return; }
+        const s = document.createElement('script');
+        s.src = 'https://'+MIRRORS[i]+'/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js';
+        s.onload = () => resolve();
+        s.onerror = () => { i++; tryNext(); };
+        document.head.appendChild(s);
+      })();
+    }).catch(e=>{ libPromise = null; throw e; });
+  }
+  return libPromise;
+}
+/* ---------- 部首/结构（cnchar-radical） ---------- */
+let radicalLibPromise = null;
+function ensureRadicalLib(){
+  if(window.CncharRadical) return Promise.resolve();
+  if(!radicalLibPromise){
+    radicalLibPromise = new Promise((resolve,reject)=>{
+      let i = 0;
+      (function tryNext(){
+        if(i>=MIRRORS.length){ reject(new Error('radical lib load failed')); return; }
+        const s = document.createElement('script');
+        s.src = 'https://'+MIRRORS[i]+'/npm/cnchar-radical/cnchar.radical.min.js';
+        s.onload = () => resolve();
+        s.onerror = () => { i++; tryNext(); };
+        document.head.appendChild(s);
+      })();
+    }).catch(e=>{ radicalLibPromise = null; throw e; });
+  }
+  return radicalLibPromise;
+}
+function radicalOf(ch){
+  if(!window.CncharRadical) return null;
+  let r; try{ r = window.CncharRadical(ch); }catch(e){ return null; }
+  if(!r) return null;
+  if(!Array.isArray(r)) r = [r];
+  const info = r[0];
+  return (info && typeof info === 'object' && info.radical) ? info : null;
+}
+
+/* ---------- 交互：搜索 / 页签 / 课筛选 ---------- */
+document.getElementById('q').addEventListener('input', e=>{
+  state.q = e.target.value;
+  document.getElementById('qClear').classList.toggle('show', !!state.q);
+  render();
+});
+document.getElementById('qClear').addEventListener('click', ()=>{
+  document.getElementById('q').value=''; state.q=''; document.getElementById('qClear').classList.remove('show'); render();
+});
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click', ()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+  t.classList.add('on'); state.book = t.dataset.book; state.lesson='all'; render();
+}));
+document.getElementById('lessonJump').addEventListener('change', e=>{
+  state.lesson = e.target.value; render(); scrollToLesson(state.lesson);
+});
+
+/* ---------- 笔顺动画弹窗 ---------- */
+let writer = null, current = null;
+const mask = document.getElementById('mask');
+const writerBox = document.getElementById('writerBox');
+
+function playAnimation(item){
+  // 重建笔顺实例：销毁旧画布后重新创建，保证每次都从头播放
+  const size = Math.max(120, Math.min(230, writerBox.clientWidth));
+  if(writer){ try{ writer.cancelAnimation(); }catch(e){} writer = null; }
+  writerBox.innerHTML = '';
+  writer = HanziWriter.create(writerBox, item.c, {
+    width: size, height: size, padding: 8,
+    charDataLoader: (c) => getCharData(c),
+    showCharacter: false, showOutline: true,
+    strokeColor: '#33322e', outlineColor: '#d8cfb8', radicalColor: '#c93a2b',
+    strokeAnimationSpeed: 1.1,
+    delayBetweenStrokes: 260
+  });
+  writer.animateCharacter();
+}
+
+function findItem(key){
+  const [c, book, lesson] = key.split('|');
+  return flat.find(it=>it.c===c && it.book===book && it.lesson===lesson);
+}
+function itemsInOrder(){
+  // 按当前筛选结果的顺序，供“上一个/下一个”使用
+  return flat.filter(matches);
+}
+function showModal(key){
+  const item = findItem(key);
+  if(!item) return;
+  current = item;
+  document.getElementById('mChar').textContent = item.c;
+  const multi = CHAR_DATA.multi ? CHAR_DATA.multi[item.c] : null;
+  document.getElementById('mPy').textContent = multi ? multi.m.map(r=>r.p).join(' ／ ') : item.p;
+  document.getElementById('mMeta').textContent = item.book==='shang' ? '二年级上册 · '+item.lesson : '二年级下册 · '+item.lesson;
+  document.getElementById('mExtra').textContent = '';
+  document.getElementById('mWords').innerHTML = '';
+  document.getElementById('mReadings').innerHTML = '';
+  if(multi){
+    // 常用读音(主读音)可朗读并加"常用"标识; 其余读音只标注拼音与组词
+    document.getElementById('mReadings').innerHTML = multi.m.map((r,i)=>
+      '<div class="rd"><span class="rd-py">'+r.p+'</span>'
+      + (i===0 ? '<button class="sound rd-sound" aria-label="朗读 '+item.c+'">'+SPEAKER_SVG+'</button><span class="rd-tag">常用</span>' : '')
+      + '<span class="rd-words">'+r.w.map(w=>'<span>'+w+'</span>').join('')+'</span>'
+      + '</div>').join('');
+  } else {
+    document.getElementById('mWords').innerHTML = item.w.map(w=>'<span>'+w+'</span>').join('');
+  }
+  document.getElementById('strokeInfo').innerHTML = '';
+  document.getElementById('netNote').style.display = 'none';
+  mask.classList.add('show'); mask.setAttribute('aria-hidden','false');
+  document.body.style.overflow = 'hidden';
+  if(writer){ writer = null; writerBox.innerHTML = ''; }
+  ensureRadicalLib().then(()=>{
+    if(current !== item) return;
+    const info = radicalOf(item.c);
+    if(info && info.radical){
+      document.getElementById('mExtra').innerHTML = '部首：<b>'+info.radical+'</b>　结构：<b>'+info.struct+'</b>' + (info.radicalCount ? '　部首 <b>'+info.radicalCount+'</b> 画' : '');
+    } else {
+      document.getElementById('mExtra').innerHTML = '部首：<b>—</b>　结构：<b>—</b>';
+    }
+  }).catch(()=>{});
+  ensureLib().then(()=>{
+    if(!window.HanziWriter || current !== item) return;
+    return getCharData(item.c).then(d=>{
+      if(current !== item) return;
+      const strokes = d.strokes;
+      document.getElementById('strokeInfo').innerHTML = '共 <b>'+strokes.length+'</b> 画 · 点击「再写一遍」可重播动画';
+      playAnimation(item);
+    });
+  }).catch(()=>{
+    if(current === item) document.getElementById('netNote').style.display='block';
+  });
+}
+function closeModal(){
+  mask.classList.remove('show'); mask.setAttribute('aria-hidden','true');
+  document.body.style.overflow = '';
+  if(writer){ try{ writer.cancelAnimation(); }catch(e){} writer = null; }
+  writerBox.innerHTML = '';
+}
+/* ---------- 练习本（HanZiFun 联动） ---------- */
+const PRACTICE_BASE = 'https://hanzi.2001002.xyz/';
+const pSel = new Set();
+let pBook = 'shang';
+function pracRenderLessons(){
+  const book = CHAR_DATA[pBook];
+  document.getElementById('pLessons').innerHTML = book.lessons.map(([l])=>
+    '<label class="dchk"><input type="checkbox" value="'+l.replace(/"/g,'&quot;')+'"'+(pSel.has(l)?' checked':'')+'>'+l+'</label>').join('');
+  pracUpdateCount();
+}
+function pracUpdateCount(){
+  const n = CHAR_DATA[pBook].lessons.filter(([l])=>pSel.has(l)).reduce((s,[,rows])=>s+rows.length, 0);
+  document.getElementById('pCount').textContent = n;
+}
+function pracOpenSetup(){
+  showView('pracsetup');
+  pracRenderLessons();
+}
+function pracOpenFrame(){
+  if(!pSel.size) return;
+  const chars = [];
+  CHAR_DATA[pBook].lessons.forEach(([l, rows])=>{
+    if(!pSel.has(l)) return;
+    rows.forEach(([c])=> chars.push(c));
+  });
+  if(!chars.length) return;
+  const tpl = (document.querySelector('input[name="ptpl"]:checked') || {}).value || 'trace';
+  const url = PRACTICE_BASE + '?chars=' + encodeURIComponent(chars.join(' ')) + '&tpl=' + tpl;
+  document.getElementById('pracTitle').textContent = '练习本 · '+(pBook==='shang'?'上册':'下册')+' · '+chars.length+' 字';
+  document.getElementById('pracFrame').src = url;
+  document.getElementById('pracOpen').href = url;
+  document.getElementById('practice').hidden = false;
+  document.body.style.overflow = 'hidden';
+}
+function closePractice(){
+  document.getElementById('practice').hidden = true;
+  document.getElementById('pracFrame').src = 'about:blank';
+  document.body.style.overflow = document.getElementById('mask').classList.contains('show') ? 'hidden' : '';
+}
+document.getElementById('pracOpenBtn').addEventListener('click', pracOpenSetup);
+document.getElementById('pStart').addEventListener('click', pracOpenFrame);
+document.getElementById('pBack').addEventListener('click', ()=>showView('cards'));
+document.getElementById('pracClose').addEventListener('click', closePractice);
+document.getElementById('pSelAll').addEventListener('click', ()=>{
+  pSel.clear();
+  CHAR_DATA[pBook].lessons.forEach(([l])=>pSel.add(l));
+  pracRenderLessons();
+});
+document.getElementById('pSelNone').addEventListener('click', ()=>{
+  pSel.clear();
+  pracRenderLessons();
+});
+document.querySelectorAll('input[name="pbook"]').forEach(r=>r.addEventListener('change', ()=>{
+  pBook = r.value;
+  pSel.clear();
+  pracRenderLessons();
+}));
+document.getElementById('pLessons').addEventListener('change', e=>{
+  const cb = e.target;
+  if(!cb || !cb.matches || !cb.matches('input[type="checkbox"]')) return;
+  const l = cb.value;
+  if(cb.checked) pSel.add(l); else pSel.delete(l);
+  pracUpdateCount();
+});
+/* ---------- 生字本（查看/移除） ---------- */
+function wrongItemOf(c){
+  return flat.find(it=>it.c===c) || null;
+}
+function wrongRenderCards(){
+  const list = Object.keys(WRONG);
+  document.getElementById('wCount').textContent = list.length;
+  const grid = document.getElementById('wGrid');
+  if(!grid) return;
+  if(!list.length){
+    grid.innerHTML = '<div class="wempty">暂无生字。听写时点“加入生字表”，不会的字会自动收藏到这里。</div>';
+    return;
+  }
+  grid.innerHTML = list.map(c=>{
+    const it = wrongItemOf(c);
+    const multi = CHAR_DATA.multi ? CHAR_DATA.multi[c] : null;
+    const py = multi ? multi.p : (it ? it.p : '');
+    const words = multi ? (multi.m[0].w.join('、')) : (it ? it.w.slice(0,3).join('、') : '');
+    return '<div class="wcard" data-c="'+c+'">'
+      + '<div class="wc-char">'+c+'</div>'
+      + (py ? '<div class="wc-py">'+py+'</div>' : '')
+      + (words ? '<div class="wc-words">'+words+'</div>' : '')
+      + '<button class="wc-del" type="button" data-del="'+c+'" title="会了，移出生字本">移除</button>'
+      + '</div>';
+  }).join('');
+}
+function wrongOpen(){
+  showView('wrong');
+  wrongRenderCards();
+}
+function wrongClear(){
+  if(!Object.keys(WRONG).length) return;
+  if(!window.confirm('确定清空生字本吗？')) return;
+  WRONG = {};
+  saveWrong();
+  wrongRenderCards();
+  scheduleSync();
+}
+document.getElementById('wrongOpenBtn').addEventListener('click', wrongOpen);
+document.getElementById('wBack').addEventListener('click', ()=>showView('cards'));
+document.getElementById('wClear').addEventListener('click', wrongClear);
+document.getElementById('wGrid').addEventListener('click', e=>{
+  const del = e.target.closest('button[data-del]');
+  if(del){
+    e.stopPropagation();
+    delete WRONG[del.getAttribute('data-del')];
+    saveWrong();
+    wrongRenderCards();
+    scheduleSync();
+    return;
+  }
+  const card = e.target.closest('.wcard');
+  if(!card) return;
+  const it = wrongItemOf(card.getAttribute('data-c'));
+  if(it) showModal(it.c);
+});
+/* ---------- 朗读（Web Speech API） ---------- */
+const SPEAKER_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+function pickVoice(){
+  // 优先选用发音更准的中文语音(晓晓/云希/Google等), 避免系统旧语音读错多音字
+  try{
+    if(!window.speechSynthesis || !speechSynthesis.getVoices) return null;
+    const vs = speechSynthesis.getVoices();
+    const zh = vs.filter(v=>/^zh[-_]/.test(v.lang) || /Chinese/i.test(v.name));
+    if(!zh.length) return null;
+    const prefer = ['Xiaoxiao','Yunxi','Yaoyao','Google 普通话','Google 中文','Huihui','Kangkang'];
+    for(const key of prefer){
+      const v = zh.find(v=>v.name.includes(key));
+      if(v) return v;
+    }
+    return zh[0];
+  }catch(e){ return null; }
+}
+function speechTextOf(item){
+  const multi = CHAR_DATA.multi ? CHAR_DATA.multi[item.c] : null;
+  if(multi) return item.c + '，组词：' + multi.m[0].w.join('、') + '。';
+  return item.c + '，组词：' + item.w.join('、') + '。';
+}
+function speakItem(item){
+  if(!item || !('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(speechTextOf(item));
+  u.lang = 'zh-CN';
+  const voice = pickVoice();
+  if(voice) u.voice = voice;
+  u.rate = 0.85;
+  speechSynthesis.speak(u);
+}
+function flashSound(btn){
+  if(!btn) return;
+  btn.classList.add('playing');
+  setTimeout(()=>btn.classList.remove('playing'), 1500);
+}
+/* ---------- 听写（设置 / 播放状态机） ---------- */
+function showView(name){
+  document.getElementById('viewCards').hidden = (name!=='cards');
+  document.getElementById('viewDictSetup').hidden = (name!=='dictsetup');
+  document.getElementById('viewDictRun').hidden = (name!=='dictrun');
+  document.getElementById('viewPracticeSetup').hidden = (name!=='pracsetup');
+  document.getElementById('viewWrong').hidden = (name!=='wrong');
+  document.getElementById('viewAuth').hidden = (name!=='auth');
+  window.scrollTo(0,0);
+}
+const dictSel = new Set();
+let dictBook = 'shang';
+let D = null, seq = 0;
+/* 生字表: 全局按字存储(localStorage) */
+let WRONG = {};
+try{ WRONG = JSON.parse(localStorage.getItem('zykb_wrong') || '{}') || {}; }catch(e){ WRONG = {}; }
+function saveWrong(){
+  try{ localStorage.setItem('zykb_wrong', JSON.stringify(WRONG)); }catch(e){}
+}
+/* ---------- 账号与云端同步 ---------- */
+const AUTH = {
+  token: (function(){ try{ return localStorage.getItem('zika_token') || ''; }catch(e){ return ''; } })(),
+  email: (function(){ try{ return localStorage.getItem('zika_email') || ''; }catch(e){ return ''; } })()
+};
+const API_BASE = (location.protocol === 'file:') ? 'https://zika.2001002.xyz/api' : '/api';
+let authMode = 'login';
+let syncTimer = null;
+function authBtnRender(){
+  const b = document.getElementById('authBtn');
+  if(!b) return;
+  b.textContent = AUTH.email ? (AUTH.email.split('@')[0] + '·退出') : '登录';
+  b.classList.toggle('logged', !!AUTH.email);
+}
+async function apiFetch(path, opts = {}){
+  const headers = Object.assign({'content-type': 'application/json'}, opts.headers || {});
+  if(AUTH.token) headers['authorization'] = 'Bearer ' + AUTH.token;
+  const res = await fetch(API_BASE + path, Object.assign({}, opts, { headers }));
+  let data = null;
+  try{ data = await res.json(); }catch(e){}
+  if(!res.ok){
+    const err = new Error((data && data.error) || ('请求失败 ' + res.status));
+    err.status = res.status;
+    throw err;
+  }
+  return data;
+}
+function authOpen(){
+  if(AUTH.email){
+    if(window.confirm('退出登录 ' + AUTH.email + ' 吗？')){
+      apiFetch('/logout', { method: 'POST' }).catch(()=>{});
+      AUTH.token = ''; AUTH.email = '';
+      try{ localStorage.removeItem('zika_token'); localStorage.removeItem('zika_email'); }catch(e){}
+      authBtnRender();
+    }
+    return;
+  }
+  authMode = 'login';
+  authRenderForm();
+  showView('auth');
+}
+function authRenderForm(){
+  document.getElementById('authTitle').textContent = authMode === 'login' ? '登录' : '注册';
+  document.getElementById('authSubmit').textContent = authMode === 'login' ? '登录' : '注册';
+  document.getElementById('authSwitch').textContent = authMode === 'login' ? '没有账号？点这里注册' : '已有账号？点这里登录';
+  document.getElementById('authErr').textContent = '';
+}
+function authSubmit(){
+  const email = document.getElementById('authEmail').value.trim();
+  const pwd = document.getElementById('authPwd').value;
+  const errEl = document.getElementById('authErr');
+  errEl.textContent = '';
+  if(!email || !pwd){ errEl.textContent = '请填写邮箱和密码'; return; }
+  const btn = document.getElementById('authSubmit');
+  btn.disabled = true;
+  const path = authMode === 'login' ? '/login' : '/register';
+  apiFetch(path, { method: 'POST', body: JSON.stringify({ email: email, password: pwd }) })
+    .then(d=>{
+      AUTH.token = d.token; AUTH.email = d.email;
+      try{ localStorage.setItem('zika_token', d.token); localStorage.setItem('zika_email', d.email); }catch(e){}
+      authBtnRender();
+      btn.disabled = false;
+      document.getElementById('authPwd').value = '';
+      showView('cards');
+      syncPull();
+    })
+    .catch(err=>{
+      btn.disabled = false;
+      errEl.textContent = err.message || '操作失败，请检查网络';
+    });
+}
+function scheduleSync(){
+  if(!AUTH.token) return;
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(syncWrongNow, 400);
+}
+async function syncWrongNow(){
+  if(!AUTH.token) return;
+  try{
+    const d = await apiFetch('/sync', { method: 'PUT', body: JSON.stringify({ chars: Object.assign({}, WRONG) }) });
+    if(d && d.chars){ WRONG = d.chars; saveWrong(); }
+  }catch(e){}
+}
+async function syncPull(){
+  if(!AUTH.token) return;
+  try{
+    const d = await apiFetch('/sync');
+    if(!d || !d.chars) return;
+    const merged = Object.assign({}, d.chars);
+    const local = Object.assign({}, WRONG);
+    for(const k of Object.keys(local)) merged[k] = true;
+    WRONG = merged; saveWrong();
+    if(typeof wrongRenderCards === 'function') wrongRenderCards();
+    apiFetch('/sync', { method: 'PUT', body: JSON.stringify({ chars: Object.assign({}, WRONG) }) }).catch(()=>{});
+  }catch(e){}
+}
+document.getElementById('authBtn').addEventListener('click', authOpen);
+document.getElementById('authSwitch').addEventListener('click', ()=>{ authMode = authMode === 'login' ? 'register' : 'login'; authRenderForm(); });
+document.getElementById('authSubmit').addEventListener('click', authSubmit);
+document.getElementById('authBack').addEventListener('click', ()=>showView('cards'));
+document.getElementById('authEmail').addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('authSubmit').click(); });
+document.getElementById('authPwd').addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('authSubmit').click(); });
+authBtnRender();
+if(AUTH.token){
+  apiFetch('/me').catch(()=>{
+    AUTH.token = ''; AUTH.email = '';
+    try{ localStorage.removeItem('zika_token'); localStorage.removeItem('zika_email'); }catch(e){}
+    authBtnRender();
+  });
+}
+function dictRenderWrong(){
+  const list = Object.keys(WRONG);
+  const cnt = document.getElementById('dWrongCount');
+  if(cnt) cnt.textContent = list.length;
+  const box = document.getElementById('dWrongList');
+  if(!box) return;
+  box.innerHTML = list.length
+    ? list.map(c=>'<span class="dwrong"><b>'+c+'</b><button type="button" data-c="'+c+'" title="会了，移出生字表">×</button></span>').join('')
+    : '<span class="dempty">暂无生字，听写时点“加入生字表”即可收藏</span>';
+}
+function dictRenderLessons(){
+  const book = CHAR_DATA[dictBook];
+  document.getElementById('dLessons').innerHTML = book.lessons.map(([l])=>
+    '<label class="dchk"><input type="checkbox" value="'+l.replace(/"/g,'&quot;')+'"'+(dictSel.has(l)?' checked':'')+'>'+l+'</label>').join('');
+  dictUpdateCount();
+}
+function dictUpdateCount(){
+  const n = CHAR_DATA[dictBook].lessons.filter(([l])=>dictSel.has(l)).reduce((s,[,rows])=>s+rows.length, 0);
+  document.getElementById('dCount').textContent = n;
+}
+function dictOpenSetup(){
+  // 若正在听写, 先停止, 避免朗读叠加
+  if(D){ seq++; speechSynthesis.cancel(); clearTimeout(D.timer); D.running = false; D = null; }
+  document.getElementById('dStatusTip').textContent = '';
+  showView('dictsetup');
+  dictRenderLessons();
+  dictRenderWrong();
+}
+function dictStart(){
+  const wrongOn = document.getElementById('dWrongOn').checked;
+  if(!dictSel.size && !wrongOn){
+    document.getElementById('dStatusTip').textContent = '请至少选择一课，或勾选“听写时包含生字表”';
+    return;
+  }
+  const gap = parseInt(document.querySelector('input[name="dgap"]:checked').value, 10) || 3;
+  const items = [];
+  const seen = new Set();
+  CHAR_DATA[dictBook].lessons.forEach(([l, rows])=>{
+    if(!dictSel.has(l)) return;
+    rows.forEach(([c,p,w])=>{
+      if(seen.has(c)) return;
+      seen.add(c);
+      items.push({c,p,w,book:dictBook,lesson:l});
+    });
+  });
+  if(wrongOn){
+    // 生字表字按数据顺序排入: 先当前册, 再另一册
+    ['shang','xia'].forEach(bk=>{
+      CHAR_DATA[bk].lessons.forEach(([l, rows])=>{
+        rows.forEach(([c,p,w])=>{
+          if(!WRONG[c] || seen.has(c)) return;
+          seen.add(c);
+          items.push({c,p,w,book:dictBook,lesson: bk===dictBook ? l : '生字表'});
+        });
+      });
+    });
+  }
+  if(!items.length) return;
+  seq = 0;
+  D = { items, i:0, round:0, gap, paused:false, running:true, timer:null, phase:'', remaining:0, waitFn:null, waitSec:0, t0:0 };
+  document.getElementById('dProg').textContent = '第 1 / '+items.length+' 字';
+  document.getElementById('dLesson').textContent = items[0].lesson;
+  document.getElementById('dBigNum').textContent = '1';
+  document.getElementById('dBigHint').textContent = '准备听写…';
+  document.getElementById('dPause').textContent = '暂停';
+  document.getElementById('dStatus').textContent = '';
+  showView('dictrun');
+  dictPlay();
+}
+function mkDictU(text, onend){
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'zh-CN';
+  u.volume = 1;
+  const voice = pickVoice();
+  if(voice) u.voice = voice;
+  u.rate = 0.8;
+  if(onend) u.onend = onend;
+  return u;
+}
+function dictSpeak(text, onend){
+  // 语音引擎每次朗读开头可能轻微渐入: 先用近静音占位"唤醒"引擎再正式朗读
+  const s = seq;
+  let done = false;
+  const go = ()=>{
+    if(done || s!==seq || !D || D.paused || !D.running) return;
+    done = true;
+    const u = mkDictU(text, onend);
+    speechSynthesis.speak(u);
+  };
+  const p = new SpeechSynthesisUtterance(' ');
+  p.lang = 'zh-CN';
+  p.volume = 0.01;
+  p.rate = 1;
+  const v = pickVoice();
+  if(v) p.voice = v;
+  p.onend = go;
+  p.onerror = go;
+  speechSynthesis.speak(p);
+  // 兜底: 个别引擎占位可能不触发回调, 1.5 秒后强制进入正式朗读
+  setTimeout(()=>{
+    if(done || s!==seq || !D || D.paused || !D.running) return;
+    done = true;
+    speechSynthesis.cancel();
+    const u = mkDictU(text, onend);
+    speechSynthesis.speak(u);
+  }, 1500);
+}
+function dictSetStatus(s){
+  const el = document.getElementById('dStatus');
+  if(el) el.textContent = s;
+}
+function dictPlay(){
+  const s = ++seq;
+  const item = D.items[D.i];
+  D.phase = 'read';
+  document.getElementById('dProg').textContent = '第 '+(D.i+1)+' / '+D.items.length+' 字';
+  document.getElementById('dLesson').textContent = item.lesson;
+  document.getElementById('dBigNum').textContent = D.i+1;
+  document.getElementById('dBigHint').textContent = '听写第 '+(D.i+1)+' 字';
+  dictSetStatus('朗读「'+item.c+'」 第 '+(D.round+1)+' 遍');
+  dictUpdWrongBtn();
+  dictSpeak(speechTextOf(item), ()=>{ if(s!==seq||!D||D.paused||!D.running) return; dictOnEnd(); });
+}
+function dictUpdWrongBtn(){
+  const b = document.getElementById('dWrong');
+  if(!b || !D) return;
+  const inW = !!WRONG[D.items[D.i].c];
+  b.textContent = inW ? '移出生字表' : '加入生字表';
+  b.classList.toggle('on', inW);
+}
+function dictOnEnd(){
+  if(D.round < 2){
+    D.phase = 'wait';
+    dictSetStatus('第 '+(D.round+1)+' 遍读完，'+D.gap+' 秒后读下一遍');
+    dictWait(D.gap, ()=>{ if(!D) return; D.round++; dictPlay(); });
+  } else {
+    D.phase = 'nextwait';
+    dictSetStatus('三遍读完，2 秒后提示下一个字');
+    dictWait(2, ()=>{ if(!D) return; dictAnnounce(); });
+  }
+}
+function dictAnnounce(){
+  const s = ++seq;
+  D.phase = 'announce';
+  document.getElementById('dBigHint').textContent = '下一个字';
+  dictSetStatus('提示：下一个字');
+  dictSpeak('下一个字', ()=>{ if(s!==seq||!D||D.paused||!D.running) return; dictNext(); });
+}
+function dictNext(){
+  if(!D) return;
+  D.i++;
+  if(D.i >= D.items.length){ dictDone(); return; }
+  D.round = 0;
+  dictPlay();
+}
+function dictWait(sec, fn){
+  const s = ++seq;
+  D.waitSec = sec; D.waitFn = fn; D.t0 = Date.now();
+  clearTimeout(D.timer);
+  D.timer = setTimeout(()=>{
+    D.timer = null;
+    if(s!==seq || !D || D.paused || !D.running) return;
+    fn();
+  }, sec*1000);
+}
+function dictTogglePause(){
+  if(!D) return;
+  if(!D.paused){
+    seq++;
+    D.paused = true;
+    speechSynthesis.cancel();
+    clearTimeout(D.timer); D.timer = null;
+    if(D.phase==='wait' || D.phase==='nextwait'){
+      D.remaining = Math.max(0, (D.waitSec*1000) - (Date.now()-D.t0));
+    } else {
+      D.remaining = 0;
+    }
+    document.getElementById('dPause').textContent = '继续';
+    dictSetStatus('已暂停');
+  } else {
+    D.paused = false;
+    document.getElementById('dPause').textContent = '暂停';
+    if(D.remaining > 0){
+      const fn = D.waitFn, sec = D.remaining/1000;
+      dictWait(sec, fn);
+    } else {
+      dictPlay();
+    }
+  }
+}
+function dictSkip(){
+  if(!D) return;
+  seq++;
+  speechSynthesis.cancel();
+  clearTimeout(D.timer); D.timer = null;
+  dictNext();
+}
+function dictReplay(){
+  if(!D) return;
+  seq++;
+  speechSynthesis.cancel();
+  clearTimeout(D.timer); D.timer = null;
+  D.round = 0;
+  dictPlay();
+}
+function dictExit(){
+  if(D){ seq++; speechSynthesis.cancel(); clearTimeout(D.timer); D.running = false; D = null; }
+  showView('cards');
+}
+function dictDone(){
+  document.getElementById('dBigHint').textContent = '完成';
+  document.getElementById('dProg').textContent = '第 '+D.items.length+' / '+D.items.length+' 字';
+  document.getElementById('dPause').textContent = '暂停';
+  dictSetStatus('听写完成！共 '+D.items.length+' 字');
+  D.running = false; D = null;
+}
+document.getElementById('dWrong').addEventListener('click', ()=>{
+  if(!D) return;
+  const c = D.items[D.i].c;
+  if(WRONG[c]){ delete WRONG[c]; } else { WRONG[c] = true; }
+  saveWrong();
+  dictUpdWrongBtn();
+  scheduleSync();
+});
+document.getElementById('dWrongList').addEventListener('click', e=>{
+  const btn = e.target && e.target.closest ? e.target.closest('button[data-c]') : null;
+  if(!btn) return;
+  delete WRONG[btn.getAttribute('data-c')];
+  saveWrong();
+  dictRenderWrong();
+  scheduleSync();
+});
+document.getElementById('dictOpen').addEventListener('click', dictOpenSetup);
+document.getElementById('dBack').addEventListener('click', dictExit);
+document.getElementById('dExit').addEventListener('click', dictExit);
+document.getElementById('dStart').addEventListener('click', dictStart);
+document.getElementById('dPause').addEventListener('click', dictTogglePause);
+document.getElementById('dSkip').addEventListener('click', dictSkip);
+document.getElementById('dReplay').addEventListener('click', dictReplay);
+document.getElementById('dSelAll').addEventListener('click', ()=>{
+  dictSel.clear();
+  CHAR_DATA[dictBook].lessons.forEach(([l])=>dictSel.add(l));
+  dictRenderLessons();
+});
+document.getElementById('dSelNone').addEventListener('click', ()=>{
+  dictSel.clear();
+  dictRenderLessons();
+});
+document.querySelectorAll('input[name="dbook"]').forEach(r=>r.addEventListener('change', ()=>{
+  dictBook = r.value;
+  dictSel.clear();
+  dictRenderLessons();
+}));
+document.getElementById('dLessons').addEventListener('change', e=>{
+  const cb = e.target;
+  if(!cb || !cb.matches || !cb.matches('input[type="checkbox"]')) return;
+  const l = cb.value;
+  if(cb.checked) dictSel.add(l); else dictSel.delete(l);
+  dictUpdateCount();
+});
+
+grid.addEventListener('click', e=>{
+  const card = e.target.closest('.card'); if(!card) return;
+  const sbtn = e.target.closest('.sound');
+  if(sbtn){
+    speakItem(findItem(card.dataset.k+'|'+card.dataset.book+'|'+card.dataset.lesson));
+    flashSound(sbtn);
+    return;
+  }
+  showModal(card.dataset.k+'|'+card.dataset.book+'|'+card.dataset.lesson);
+});
+grid.addEventListener('keydown', e=>{
+  const sbtn = e.target.closest('.sound');
+  if(sbtn && (e.key==='Enter' || e.key===' ')){
+    e.preventDefault(); e.stopPropagation();
+    const card = sbtn.closest('.card');
+    speakItem(findItem(card.dataset.k+'|'+card.dataset.book+'|'+card.dataset.lesson));
+    flashSound(sbtn);
+  }
+});
+document.getElementById('mClose').addEventListener('click', closeModal);
+mask.addEventListener('click', e=>{ if(e.target===mask) closeModal(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+document.getElementById('mReplay').addEventListener('click', ()=>{
+  if(writer && current){ playAnimation(current); }
+});
+document.getElementById('mSound').addEventListener('click', ()=>{
+  if(current) speakItem(current);
+  flashSound(document.getElementById('mSound'));
+});
+document.getElementById('mReadings').addEventListener('click', e=>{
+  const btn = e.target.closest('.sound'); if(!btn) return;
+  if(current){ speakItem(current); flashSound(btn); }
+});
+document.getElementById('mPrev').addEventListener('click', ()=>{
+  const list = itemsInOrder();
+  const idx = list.findIndex(it=>it===current);
+  const next = list[(idx-1+list.length)%list.length];
+  showModal(next.c+'|'+next.book+'|'+next.lesson);
+});
+document.getElementById('mNext').addEventListener('click', ()=>{
+  const list = itemsInOrder();
+  const idx = list.findIndex(it=>it===current);
+  const next = list[(idx+1)%list.length];
+  showModal(next.c+'|'+next.book+'|'+next.lesson);
+});
+
+render();
+</script>
+</body>
+</html>

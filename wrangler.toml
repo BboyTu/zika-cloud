@@ -1,0 +1,26 @@
+# zika 字卡 — Cloudflare Pages Functions 配置
+# 使用方法:
+#   1) 创建资源:  wrangler d1 create zika
+#                  wrangler kv namespace create ZIKA_SESSIONS
+#   2) 把下方 database_id / id 替换为创建时返回的 ID
+#   3) 初始化数据库: wrangler d1 execute zika --file=schema.sql
+#   4) 部署:        wrangler pages deploy .
+#   也可以不用本文件, 直接在 Pages 控制台 -> Settings -> Bindings 里绑定
+#   D1 (变量名 DB) 和 KV (变量名 KV)。
+
+name = "zika"
+compatibility_date = "2025-04-01"
+
+[observability]
+enabled = true
+
+# ---- D1 数据库（用户、生字本）----
+[[d1_databases]]
+binding = "DB"
+database_name = "zika"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+
+# ---- KV 命名空间（会话令牌）----
+[[kv_namespaces]]
+binding = "KV"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
