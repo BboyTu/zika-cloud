@@ -152,7 +152,6 @@ main{max-width:1120px; margin:0 auto; padding:4px 18px 40px;}
 .sound:active{transform:scale(.9);}
 .sound svg{width:13px; height:13px;}
 .sound.playing{background:var(--accent); border-color:var(--accent); color:#fff;}
-.modal-head .pyrow{display:flex; align-items:center; justify-content:flex-start; gap:10px;}
 .card .stroke{font-size:12px; color:var(--ink-soft); min-height:17px;}
 .card .stroke b{color:var(--green); font-weight:700;}
 .card .words{display:flex; flex-wrap:wrap; gap:5px; justify-content:center; margin-top:2px;}
@@ -188,35 +187,44 @@ footer a{color:var(--accent-deep);}
   margin:auto;
 }
 @keyframes pop{from{transform:scale(.94); opacity:0;} to{transform:scale(1); opacity:1;}}
-.modal-head{
-  display:flex; align-items:center; gap:14px; padding:18px 20px 12px;
-  border-bottom:1px solid var(--line);
+#modal{position:relative;}
+#modal .close{
+  position:absolute; top:12px; right:12px; z-index:6;
+  width:32px; height:32px; border-radius:50%; border:none; cursor:pointer;
+  background:#efe8d9; color:var(--ink-soft); font-size:15px;
 }
-.modal-head .big{font-size:60px; font-weight:700; line-height:1.1; color:var(--accent-deep);}
-.modal-head .py{font-size:18px; font-weight:700; color:var(--accent); font-family:"Noto Sans","Georgia","Times New Roman","Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;}
-.modal-head .meta{font-size:12.5px; color:var(--ink-soft); margin-top:3px;}
-#mExtra b{color:var(--accent-deep); font-weight:700;}
-.def-toggle{
-  display:inline-flex; align-items:center; gap:4px; margin-left:8px; padding:2px 10px;
-  border-radius:999px; background:var(--gold-soft); border:1px solid #f0dfbc;
-  color:var(--accent-deep); font-size:12px; font-weight:700; cursor:pointer;
-  user-select:none; -webkit-user-select:none; vertical-align:middle;
+#modal .close:hover{background:var(--accent); color:#fff;}
+.modal-top{
+  display:flex; align-items:flex-start; gap:16px; padding:22px 16px 0;
 }
-.def-toggle .def-arrow{display:inline-block; transition:transform .18s; font-size:10px;}
-.def-toggle.open .def-arrow{transform:rotate(180deg);}
-.def-body{
-  margin-top:8px; font-size:13px; color:#6f6857; line-height:1.7; text-align:left;
-  background:#fffef8; border:1px solid #f0dfbc; border-radius:10px; padding:8px 12px;
-  max-height:200px; overflow-y:auto;
+.char-zone{flex:0 0 auto; display:flex; flex-direction:column; align-items:center;}
+.py-zone{flex:1; min-width:0; display:flex; flex-direction:column; gap:14px; padding-top:2px;}
+.py-row{display:flex;}
+.py-grid-big{
+  position:relative; display:flex; align-items:center; justify-content:center; gap:14px;
+  width:100%; min-height:48px; padding:6px 12px; border-radius:6px; background-color:#fdfdff;
+  background-image:
+    linear-gradient(to bottom, transparent 0, transparent calc(33.333% - .5px), #b8c8dc calc(33.333% - .5px), #b8c8dc calc(33.333% + .5px), transparent calc(33.333% + .5px)),
+    linear-gradient(to bottom, transparent 0, transparent calc(66.667% - .5px), #b8c8dc calc(66.667% - .5px), #b8c8dc calc(66.667% + .5px), transparent calc(66.667% + .5px));
+  border-top:1px solid #b8c8dc; border-bottom:1px solid #b8c8dc;
 }
-.modal-head .close{
-  margin-left:auto; width:34px; height:34px; border-radius:50%; border:none; cursor:pointer;
-  background:#efe8d9; color:var(--ink-soft); font-size:16px;
+.py-cell{display:inline-flex; align-items:center; gap:6px; flex:0 1 auto;}
+.py-cell .py-text{font-family:Arial,Helvetica,sans-serif; font-weight:700; font-size:26px; color:#2b2f36; white-space:nowrap; line-height:48px;}
+.py-cell .py-sound{
+  width:26px; height:26px; border:1px solid #f0dfbc; cursor:pointer; border-radius:50%;
+  background:#fff; color:var(--accent); display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto;
 }
-.modal-head .close:hover{background:var(--accent); color:#fff;}
-.modal-body{padding:16px 20px 22px; text-align:center;}
+.py-cell .py-sound svg{width:15px; height:15px;}
+.py-cell .py-sound.playing{background:var(--accent); color:#fff;}
+.modal-meta{
+  display:flex; justify-content:space-around; margin:14px 16px 0; padding:10px 0;
+  border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  font-size:13px; color:var(--ink-soft);
+}
+.modal-meta b{color:var(--accent-deep); font-weight:700; font-size:15px;}
+.modal-body{padding:14px 20px 22px; text-align:center;}
 #writerBox{
-  width:230px; height:230px; margin:0 auto; border-radius:12px;
+  width:min(200px,42vw); height:min(200px,42vw); margin:0 auto; border-radius:12px;
   background:#fffef8;
   background-image:
     linear-gradient(to right, transparent calc(50% - .5px), #d9c69a calc(50% - .5px), #d9c69a calc(50% + .5px), transparent calc(50% + .5px)),
@@ -228,11 +236,6 @@ footer a{color:var(--accent-deep);}
 }
 #strokeInfo{margin-top:12px; font-size:13px; color:var(--ink-soft);}
 #strokeInfo b{color:var(--green); font-weight:700; font-size:15px;}
-.modal-words{margin-top:14px; display:flex; flex-wrap:wrap; gap:8px; justify-content:center;}
-.modal-words span{
-  font-size:13px; color:#6f6857; background:var(--gold-soft); border:1px solid #f0dfbc;
-  border-radius:8px; padding:4px 12px;
-}
 .readings{margin-top:14px; display:flex; flex-direction:column; gap:8px; text-align:left;}
 .readings .rd{
   display:flex; align-items:center; gap:8px; flex-wrap:wrap;
@@ -384,7 +387,9 @@ footer a{color:var(--accent-deep);}
   .dict-set{padding:18px 16px;}
   .drun-big{width:min(220px,64vw); height:min(220px,64vw);}
   #modal{max-width:100%; border-radius:16px;}
-  #writerBox{width:min(230px,64vw); height:min(230px,64vw);}
+  .modal-top{flex-direction:column; align-items:center;}
+  .py-zone{width:100%;}
+  #writerBox{width:min(168px,44vw); height:min(168px,44vw);}
 }
 @media (prefers-reduced-motion: reduce){
   *{transition:none !important; animation:none !important;}
@@ -569,25 +574,27 @@ footer a{color:var(--accent-deep);}
 </main>
 
 <footer>
-  <div>v3.41 · 数据版本：统编版 2026秋 1-6年级《写字表》（国家中小学智慧教育平台官方教材），共 12 册 2505 字。拼音、组词、部首与结构均已内置（cnchar 词典）；二年级沿用已核验静态数据。个别字目仍留待校项，欢迎指正以便更新。多音字只朗读常用读音，其余读音仅标注。</div>
+  <div>v3.42 · 数据版本：统编版 2026秋 1-6年级《写字表》（国家中小学智慧教育平台官方教材），共 12 册 2505 字。拼音、组词、部首与结构均已内置（cnchar 词典）；二年级沿用已核验静态数据。个别字目仍留待校项，欢迎指正以便更新。多音字只朗读常用读音，其余读音仅标注。</div>
   <div>笔顺动画由 <a href="https://hanziwriter.org/" target="_blank" rel="noopener">HanziWriter</a> 提供，数据来自 hanzi-writer-data；首次点击字卡需要联网加载，之后会缓存。登录后生字本可跨设备同步。</div>
 </footer>
 
 <div id="mask" aria-hidden="true">
   <div id="modal" role="dialog" aria-modal="true" aria-label="字卡详情">
-    <div class="modal-head">
-      <div class="big hanzi-font" id="mChar"></div>
-      <div>
-        <div class="pyrow"><span class="py" id="mPy"></span><button class="sound" id="mSound" aria-label="朗读"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg></button></div>
-        <div class="meta" id="mExtra"></div>
+    <button class="close" id="mClose" aria-label="关闭">✕</button>
+    <div class="modal-top">
+      <div class="char-zone">
+        <div id="writerBox"></div>
+        <div id="strokeInfo"></div>
       </div>
-      <button class="close" id="mClose" aria-label="关闭">✕</button>
+      <div class="py-zone" id="mPyZone"></div>
+    </div>
+    <div class="modal-meta">
+      <span>部首 <b id="mRadical">—</b></span>
+      <span>笔画 <b id="mStrokes">—</b></span>
+      <span>结构 <b id="mStruct">—</b></span>
     </div>
     <div class="modal-body">
-      <div id="writerBox"></div>
-      <div id="strokeInfo"></div>
       <div id="netNote">暂时无法连接笔顺数据源，请检查网络后重试；若持续失败，可换个网络环境再打开。</div>
-      <div class="modal-words" id="mWords"></div>
       <div class="readings" id="mReadings"></div>
       <div class="btn-row">
         <button class="btn" id="mReplay">再写一遍</button>
@@ -999,26 +1006,57 @@ function itemsInOrder(){
   // 按当前筛选结果的顺序，供“上一个/下一个”使用
   return flat.filter(matches);
 }
+function pyZoneHTML(item){
+  const multi = CHAR_DATA.multi ? CHAR_DATA.multi[item.c] : null;
+  let pys = multi ? multi.m.map(r=>r.p) : [item.p || ''];
+  if(multi){
+    const cur = item.p || '';
+    if(cur){
+      const ci = pys.findIndex(p=>p && normPinyin(p)===normPinyin(cur));
+      if(ci>0){ const hit = pys.splice(ci,1)[0]; pys.unshift(hit); }
+    }
+  }
+  const per = window.innerWidth <= 600 ? 2 : 3;
+  const rows = [];
+  for(let i=0;i<pys.length;i+=per) rows.push(pys.slice(i,i+per));
+  return rows.map(row=>{
+    return '<div class="py-row"><span class="py-grid-big">'
+      + row.map(p=>{
+          const r = multi ? multi.m.find(r=>r.p===p) : null;
+          const ws = (r && r.w && r.w.length) ? r.w : [];
+          return '<span class="py-cell"><span class="py-text">'+pyToTonedText(p)+'</span>'
+            + '<button class="sound py-sound" data-py="'+p+'" data-words="'+encodeURIComponent(ws.join('、'))+'" aria-label="朗读 '+p+'">'+SPEAKER_SVG+'</button></span>';
+        }).join('')
+      + '</span></div>';
+  }).join('');
+}
+function speakPinyin(py, wordsText){
+  if(!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const text = wordsText ? (py + '，组词：' + wordsText) : py;
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'zh-CN';
+  const voice = pickVoice();
+  if(voice) u.voice = voice;
+  u.rate = 0.85;
+  speechSynthesis.speak(u);
+}
 function showModal(key){
   const item = findItem(key);
   if(!item) return;
   current = item;
-  document.getElementById('mChar').textContent = item.c;
   const multi = CHAR_DATA.multi ? CHAR_DATA.multi[item.c] : null;
-  document.getElementById('mPy').innerHTML = pyLineHTML(multi ? multi.m.map(r=>r.p) : [item.p || ''], window.innerWidth <= 600);
-  document.getElementById('mExtra').textContent = '';
-  document.getElementById('mWords').innerHTML = '';
-  document.getElementById('mReadings').innerHTML = '';
+  document.getElementById('mPyZone').innerHTML = pyZoneHTML(item);
+  const readings = document.getElementById('mReadings');
+  readings.innerHTML = '';
   if(multi){
-    // 常用读音(主读音)可朗读并加"常用"标识; 其余读音只标注拼音与组词
-    document.getElementById('mReadings').innerHTML = multi.m.map((r,i)=>
-      '<div class="rd"><span class="rd-py">'+pyGridHTML(r.p,true)+'</span>'
-      + (i===0 ? '<button class="sound rd-sound" aria-label="朗读 '+item.c+'">'+SPEAKER_SVG+'</button><span class="rd-tag">常用</span>' : '')
-      + '<span class="rd-words">'+r.w.map(w=>'<span>'+w+'</span>').join('')+'</span>'
-      + '</div>').join('');
+    readings.innerHTML = multi.m.map(r=>{
+      const ws = (r.w && r.w.length) ? r.w : [];
+      return '<div class="rd"><span class="rd-py">'+r.p+'</span><span class="rd-words">'+ws.map(w=>'<span>'+w+'</span>').join('')+'</span></div>';
+    }).join('');
   } else {
     const ws = item.w || wordsOf(item.c) || [];
-    document.getElementById('mWords').innerHTML = ws.map(w=>'<span>'+w+'</span>').join('');
+    readings.innerHTML = '<div class="rd"><span class="rd-py">'+(item.p||'')+'</span><span class="rd-words">'+ws.map(w=>'<span>'+w+'</span>').join('')+'</span></div>';
   }
   document.getElementById('strokeInfo').innerHTML = '';
   document.getElementById('netNote').style.display = 'none';
@@ -1028,42 +1066,21 @@ function showModal(key){
   ensureRadicalLib().then(()=>{
     if(current !== item) return;
     const info = radicalOf(item.c);
-    if(info && info.radical){
-      const exp = CHAR_DATA.explanations ? CHAR_DATA.explanations[item.c] : '';
-      let h = '部首：<b>'+info.radical+'</b>　结构：<b>'+info.struct+'</b>' + (info.radicalCount ? '　部首 <b>'+info.radicalCount+'</b> 画' : '');
-      if(exp){
-        h += '<span class="def-toggle" id="defToggle" role="button" tabindex="0" aria-expanded="false" onclick="toggleDef(event)">释义<span class="def-arrow">▼</span></span>'
-          + '<div class="def-body" id="defBody" hidden></div>';
-      }
-      document.getElementById('mExtra').innerHTML = h;
-      if(exp){
-        const db = document.getElementById('defBody');
-        if(db) db.textContent = exp;
-      }
-    } else {
-      document.getElementById('mExtra').innerHTML = '部首：<b>—</b>　结构：<b>—</b>';
-    }
+    document.getElementById('mRadical').textContent = (info && info.radical) ? info.radical : '—';
+    document.getElementById('mStruct').textContent = (info && info.struct) ? info.struct : '—';
   }).catch(()=>{});
   ensureLib().then(()=>{
     if(!window.HanziWriter || current !== item) return;
     return getCharData(item.c).then(d=>{
       if(current !== item) return;
       const strokes = d.strokes;
+      document.getElementById('mStrokes').textContent = strokes.length;
       document.getElementById('strokeInfo').innerHTML = '共 <b>'+strokes.length+'</b> 画 · 点击「再写一遍」可重播动画';
       playAnimation(item);
     });
   }).catch(()=>{
     if(current === item) document.getElementById('netNote').style.display='block';
   });
-}
-function toggleDef(){
-  const b = document.getElementById('defBody');
-  const t = document.getElementById('defToggle');
-  if(!b || !t) return;
-  const open = b.hidden;
-  b.hidden = !open;
-  t.classList.toggle('open', open);
-  t.setAttribute('aria-expanded', open ? 'true' : 'false');
 }
 function closeModal(){
   mask.classList.remove('show'); mask.setAttribute('aria-hidden','true');
@@ -1209,8 +1226,6 @@ function pickVoice(){
   }catch(e){ return null; }
 }
 function speechTextOf(item){
-  const multi = CHAR_DATA.multi ? CHAR_DATA.multi[item.c] : null;
-  if(multi && multi.m[0].w && multi.m[0].w.length) return item.c + '，组词：' + multi.m[0].w.join('、') + '。';
   const ws = item.w || wordsOf(item.c) || [];
   if(ws.length) return item.c + '，组词：' + ws.join('、') + '。';
   return item.c + '。';
@@ -1661,9 +1676,13 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
 document.getElementById('mReplay').addEventListener('click', ()=>{
   if(writer && current){ playAnimation(current); }
 });
-document.getElementById('mSound').addEventListener('click', ()=>{
-  if(current) speakItem(current);
-  flashSound(document.getElementById('mSound'));
+document.getElementById('mPyZone').addEventListener('click', e=>{
+  const btn = e.target.closest('.py-sound'); if(!btn) return;
+  flashSound(btn);
+  const py = btn.getAttribute('data-py') || '';
+  let wordsText = '';
+  try{ wordsText = decodeURIComponent(btn.getAttribute('data-words') || ''); }catch(err){}
+  speakPinyin(py, wordsText);
 });
 document.getElementById('mReadings').addEventListener('click', e=>{
   const btn = e.target.closest('.sound'); if(!btn) return;
