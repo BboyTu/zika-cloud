@@ -136,16 +136,9 @@ main{max-width:1120px; margin:0 auto; padding:4px 18px 40px;}
 .card:hover .big{color:var(--accent-deep);}
 .card .py{font-size:15px; font-weight:700; color:var(--accent); font-family:"Noto Sans","Georgia","Times New Roman","Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;}
 
-/* ===== 拼音四线三格(方案C) ===== */
-.py-grid{position:relative;display:inline-block;padding:0 8px;vertical-align:middle;background:#fdfdff;border-radius:3px;box-shadow:inset 0 0 0 1px rgba(120,150,190,.08);}
-.py-grid i{position:absolute;left:0;right:0;height:1px;background:#a9bcd4;pointer-events:none;}
-.py-grid i:nth-child(2){top:var(--l2);}
-.py-grid i:nth-child(3){top:var(--l3);}
-.py-letter{position:absolute;font-family:"Noto Sans","Segoe UI","Arial","Helvetica","PingFang SC","Microsoft YaHei",sans-serif;font-weight:700;color:#2b2f36;white-space:nowrap;}
-.py-mid{bottom:7px;}
-.py-top{bottom:8px;}
-.py-bot{bottom:4px;}
-.py-tone{position:absolute;pointer-events:none;display:block;}
+/* ===== 拼音四线三格(三等分) ===== */
+.py-grid{position:relative;display:inline-block;padding:0 8px;vertical-align:middle;background:linear-gradient(to bottom,transparent 0,transparent calc(33.333% - 0.5px),#b8c8dc calc(33.333% - 0.5px),#b8c8dc calc(33.333% + 0.5px),transparent calc(33.333% + 0.5px),transparent calc(66.667% - 0.5px),#b8c8dc calc(66.667% - 0.5px),#b8c8dc calc(66.667% + 0.5px),transparent calc(66.667% + 0.5px));border-top:1px solid #b8c8dc;border-bottom:1px solid #b8c8dc;border-radius:2px;}
+.py-text{position:relative;display:inline-block;font-family:Arial,Helvetica,sans-serif;font-weight:700;color:#2b2f36;white-space:nowrap;}
 .py-sep{vertical-align:middle;color:#9aa5b5;font-size:13px;font-weight:700;margin:0 2px;}
 
 .card .pyrow{display:flex; align-items:center; justify-content:center; gap:6px; flex-wrap:wrap;}
@@ -576,7 +569,7 @@ footer a{color:var(--accent-deep);}
 </main>
 
 <footer>
-  <div>v3.39 · 数据版本：统编版 2026秋 1-6年级《写字表》（国家中小学智慧教育平台官方教材），共 12 册 2505 字。拼音、组词、部首与结构均已内置（cnchar 词典）；二年级沿用已核验静态数据。个别字目仍留待校项，欢迎指正以便更新。多音字只朗读常用读音，其余读音仅标注。</div>
+  <div>v3.40 · 数据版本：统编版 2026秋 1-6年级《写字表》（国家中小学智慧教育平台官方教材），共 12 册 2505 字。拼音、组词、部首与结构均已内置（cnchar 词典）；二年级沿用已核验静态数据。个别字目仍留待校项，欢迎指正以便更新。多音字只朗读常用读音，其余读音仅标注。</div>
   <div>笔顺动画由 <a href="https://hanziwriter.org/" target="_blank" rel="noopener">HanziWriter</a> 提供，数据来自 hanzi-writer-data；首次点击字卡需要联网加载，之后会缓存。登录后生字本可跨设备同步。</div>
 </footer>
 
@@ -770,43 +763,23 @@ function splitPy(py){
   }
   return {letters:letters,tone:tone,mainI:mainI};
 }
-function pyGridHTML(py,small){
+function pyToTonedText(py){
   const s=splitPy(py);
-  const H=small?26:40, F=small?19:30, sc=F/30;
-  const l2=small?6:10, l3=small?20:30;
-  let totalW=0;
-  s.letters.forEach(function(L){ totalW += (PY_ADV[L.c]||.55)*F; });
-  const gridW = totalW + 16;
-  let html='<span class="py-grid" style="--l2:'+l2+'px;--l3:'+l3+'px;height:'+H+'px;width:'+gridW.toFixed(2)+'px">';
-  html+='<i></i><i></i><i></i><i></i>';
-  let x=0, toneX=null;
-  s.letters.forEach(function(L,i){
-    const w=(PY_ADV[L.c]||.55)*F;
-    let bottom=(L.cls==='top'?8:(L.cls==='bot'?4:7))*sc;
-    let disp=L.c;
-    if(s.tone>0&&i===s.mainI&&PY_TONE_CHAR[L.c]){
-      disp=PY_TONE_CHAR[L.c][s.tone];
-    } else if(s.tone>0&&i===s.mainI){
-      toneX=x;
-    }
-    html+='<span class="py-letter py-'+L.cls+(i===s.mainI?' py-main':'')+'" style="left:'+(x).toFixed(2)+'px;bottom:'+(bottom).toFixed(2)+'px;font-size:'+F+'px;line-height:'+F+'px">'+disp+'</span>';
-    x+=w;
-  });
-  if(s.tone>0&&toneX!==null){
-    const tw=small?11:15, th=small?8:11;
-    const mvW=(PY_ADV[s.letters[s.mainI]?s.letters[s.mainI].c:'a']||.55)*F;
-    const left=toneX + mvW/2 - tw/2;
-    const ty=small?2:4;
-    const col='#2b2f36';
-    let svg='';
-    if(s.tone===1) svg='<svg width="'+tw+'" height="'+(th*.6)+'" viewBox="0 0 '+tw+' '+(th*.6)+'"><path d="M0 '+(th*.3)+' H'+tw+'" stroke="'+col+'" stroke-width="2.6"/></svg>';
-    else if(s.tone===2) svg='<svg width="'+tw+'" height="'+th+'" viewBox="0 0 '+tw+' '+th+'"><path d="M1 '+(th-3)+' L'+(tw-2)+' 1.5" stroke="'+col+'" stroke-width="2.6" fill="none"/></svg>';
-    else if(s.tone===3) svg='<svg width="'+tw+'" height="'+th+'" viewBox="0 0 '+tw+' '+th+'"><path d="M1 1.5 L'+tw/2+' '+(th-3)+' L'+(tw-1)+' 1.5" stroke="'+col+'" stroke-width="2.6" fill="none"/></svg>';
-    else svg='<svg width="'+tw+'" height="'+th+'" viewBox="0 0 '+tw+' '+th+'"><path d="M1.5 1 L'+(tw-2)+' '+(th-2)+'" stroke="'+col+'" stroke-width="2.6"/></svg>';
-    html+='<span class="py-tone" style="left:'+left.toFixed(2)+'px;top:'+ty+'px">'+svg+'</span>';
-  }
-  html+='</span>';
-  return html;
+  if(!s.tone) return s.letters.map(function(L){return L.c;}).join('');
+  const TM={a:['\u0101','\u00e1','\u01ce','\u00e0'],e:['\u0113','\u00e9','\u011b','\u00e8'],i:['\u012b','\u00ed','\u01d0','\u00ec'],o:['\u014d','\u00f3','\u01d2','\u00f2'],u:['\u016b','\u00fa','\u01d4','\u00f9'],'\u00fc':['\u01d6','\u01d8','\u01da','\u01dc']};
+  return s.letters.map(function(L,i){
+    if(i===s.mainI&&TM[L.c]) return TM[L.c][s.tone-1];
+    return L.c;
+  }).join('');
+}
+function pyGridHTML(py,small){
+  const H=small?27:45, F=small?16:26;
+  const asc=F*0.905;
+  const line3=H*2/3;
+  const baseline=(H-F)/2+asc;
+  const shift=baseline-line3;
+  const text=pyToTonedText(py);
+  return '<span class="py-grid" style="height:'+H+'px"><span class="py-text" style="font-size:'+F+'px;line-height:'+H+'px;bottom:'+shift.toFixed(2)+'px">'+text+'</span></span>';
 }
 function pyLineHTML(pys,small){
   return pys.map(function(p){ return pyGridHTML(p,small); }).join('<span class="py-sep">／</span>');
