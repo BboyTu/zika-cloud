@@ -569,7 +569,7 @@ footer a{color:var(--accent-deep);}
 </main>
 
 <footer>
-  <div>v3.40 · 数据版本：统编版 2026秋 1-6年级《写字表》（国家中小学智慧教育平台官方教材），共 12 册 2505 字。拼音、组词、部首与结构均已内置（cnchar 词典）；二年级沿用已核验静态数据。个别字目仍留待校项，欢迎指正以便更新。多音字只朗读常用读音，其余读音仅标注。</div>
+  <div>v3.41 · 数据版本：统编版 2026秋 1-6年级《写字表》（国家中小学智慧教育平台官方教材），共 12 册 2505 字。拼音、组词、部首与结构均已内置（cnchar 词典）；二年级沿用已核验静态数据。个别字目仍留待校项，欢迎指正以便更新。多音字只朗读常用读音，其余读音仅标注。</div>
   <div>笔顺动画由 <a href="https://hanziwriter.org/" target="_blank" rel="noopener">HanziWriter</a> 提供，数据来自 hanzi-writer-data；首次点击字卡需要联网加载，之后会缓存。登录后生字本可跨设备同步。</div>
 </footer>
 
@@ -789,7 +789,7 @@ function cardHtml(it){
   const ws = it.w || wordsOf(it.c) || [];
   const words = ws.map(w=>'<span>'+w+'</span>').join('');
   const multi = CHAR_DATA.multi ? CHAR_DATA.multi[it.c] : null;
-  const pyHTML = pyLineHTML(multi ? multi.m.map(r=>r.p) : [it.p || ''], true);
+  const pyHTML = pyLineHTML([it.p || ''], true);
   return '<button class="card" data-k="'+it.c+'" data-book="'+it.book+'" data-lesson="'+it.lesson.replace(/"/g,'&quot;')+'">'
     + '<span class="big hanzi-font">'+it.c+'</span>'
     + '<span class="pyrow"><span class="py">'+pyHTML+'</span><span class="sound" role="button" tabindex="0" aria-label="朗读 '+it.c+'">'+SPEAKER_SVG+'</span></span>'
