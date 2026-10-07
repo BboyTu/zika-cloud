@@ -138,7 +138,7 @@ main{max-width:1120px; margin:0 auto; padding:4px 18px 40px;}
 
 /* ===== 拼音四线三格(三等分) ===== */
 .py-grid{position:relative;display:inline-block;padding:0 8px;vertical-align:middle;background:linear-gradient(to bottom,transparent 0,transparent calc(33.333% - 0.5px),#b8c8dc calc(33.333% - 0.5px),#b8c8dc calc(33.333% + 0.5px),transparent calc(33.333% + 0.5px),transparent calc(66.667% - 0.5px),#b8c8dc calc(66.667% - 0.5px),#b8c8dc calc(66.667% + 0.5px),transparent calc(66.667% + 0.5px));border-top:1px solid #b8c8dc;border-bottom:1px solid #b8c8dc;border-radius:2px;}
-.py-text{position:relative;display:inline-block;font-family:Arial,Helvetica,sans-serif;font-weight:700;color:#2b2f36;white-space:nowrap;}
+.py-text{position:relative;display:inline-block;font-family:Arial,Helvetica,sans-serif;font-weight:500;color:#2b2f36;white-space:nowrap;}
 .py-sep{vertical-align:middle;color:#9aa5b5;font-size:13px;font-weight:700;margin:0 2px;}
 
 .card .pyrow{display:flex; align-items:center; justify-content:center; gap:6px; flex-wrap:wrap;}
@@ -187,44 +187,30 @@ footer a{color:var(--accent-deep);}
   margin:auto;
 }
 @keyframes pop{from{transform:scale(.94); opacity:0;} to{transform:scale(1); opacity:1;}}
-#modal{position:relative;}
-#modal .close{
-  position:absolute; top:12px; right:12px; z-index:6;
-  width:32px; height:32px; border-radius:50%; border:none; cursor:pointer;
-  background:#efe8d9; color:var(--ink-soft); font-size:15px;
+.modal-head{
+  display:flex; align-items:center; gap:14px; padding:18px 20px 12px;
+  border-bottom:1px solid var(--line);
 }
-#modal .close:hover{background:var(--accent); color:#fff;}
-.modal-top{
-  display:flex; align-items:flex-start; gap:16px; padding:22px 16px 0;
-}
-.char-zone{flex:0 0 auto; display:flex; flex-direction:column; align-items:center;}
-.py-zone{flex:1; min-width:0; display:flex; flex-direction:column; gap:14px; padding-top:2px;}
-.py-row{display:flex;}
-.py-grid-big{
-  position:relative; display:flex; align-items:center; justify-content:center; gap:14px;
-  width:100%; min-height:48px; padding:6px 12px; border-radius:6px; background-color:#fdfdff;
-  background-image:
-    linear-gradient(to bottom, transparent 0, transparent calc(33.333% - .5px), #b8c8dc calc(33.333% - .5px), #b8c8dc calc(33.333% + .5px), transparent calc(33.333% + .5px)),
-    linear-gradient(to bottom, transparent 0, transparent calc(66.667% - .5px), #b8c8dc calc(66.667% - .5px), #b8c8dc calc(66.667% + .5px), transparent calc(66.667% + .5px));
-  border-top:1px solid #b8c8dc; border-bottom:1px solid #b8c8dc;
-}
-.py-cell{display:inline-flex; align-items:center; gap:6px; flex:0 1 auto;}
-.py-cell .py-text{font-family:Arial,Helvetica,sans-serif; font-weight:700; font-size:26px; color:#2b2f36; white-space:nowrap; line-height:48px;}
-.py-cell .py-sound{
-  width:26px; height:26px; border:1px solid #f0dfbc; cursor:pointer; border-radius:50%;
+.modal-head .big{font-size:60px; font-weight:700; line-height:1.1; color:var(--accent-deep);}
+.modal-head .head-right{flex:1; min-width:0;}
+.modal-head .pyrow{display:flex; flex-wrap:wrap; align-items:center; gap:8px;}
+.modal-head .py-unit{display:inline-flex; align-items:center; gap:4px;}
+.modal-head .py-sound{
+  width:22px; height:22px; border:1px solid #f0dfbc; cursor:pointer; border-radius:50%;
   background:#fff; color:var(--accent); display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto;
 }
-.py-cell .py-sound svg{width:15px; height:15px;}
-.py-cell .py-sound.playing{background:var(--accent); color:#fff;}
-.modal-meta{
-  display:flex; justify-content:space-around; margin:14px 16px 0; padding:10px 0;
-  border-top:1px solid var(--line); border-bottom:1px solid var(--line);
-  font-size:13px; color:var(--ink-soft);
+.modal-head .py-sound svg{width:13px; height:13px;}
+.modal-head .py-sound.playing{background:var(--accent); color:#fff;}
+.modal-head .meta{font-size:12.5px; color:var(--ink-soft); margin-top:6px;}
+.modal-head .meta b{color:var(--accent-deep); font-weight:700;}
+.modal-head .close{
+  margin-left:auto; width:32px; height:32px; border-radius:50%; border:none; cursor:pointer;
+  background:#efe8d9; color:var(--ink-soft); font-size:15px; flex:0 0 auto;
 }
-.modal-meta b{color:var(--accent-deep); font-weight:700; font-size:15px;}
-.modal-body{padding:14px 20px 22px; text-align:center;}
+.modal-head .close:hover{background:var(--accent); color:#fff;}
+.modal-body{padding:16px 20px 22px; text-align:center;}
 #writerBox{
-  width:min(200px,42vw); height:min(200px,42vw); margin:0 auto; border-radius:12px;
+  width:230px; height:230px; margin:0 auto; border-radius:12px;
   background:#fffef8;
   background-image:
     linear-gradient(to right, transparent calc(50% - .5px), #d9c69a calc(50% - .5px), #d9c69a calc(50% + .5px), transparent calc(50% + .5px)),
@@ -387,9 +373,9 @@ footer a{color:var(--accent-deep);}
   .dict-set{padding:18px 16px;}
   .drun-big{width:min(220px,64vw); height:min(220px,64vw);}
   #modal{max-width:100%; border-radius:16px;}
-  .modal-top{flex-direction:column; align-items:center;}
-  .py-zone{width:100%;}
-  #writerBox{width:min(168px,44vw); height:min(168px,44vw);}
+  .modal-head{padding:14px 14px 10px; gap:10px;}
+  .modal-head .big{font-size:48px;}
+  #writerBox{width:min(230px,64vw); height:min(230px,64vw);}
 }
 @media (prefers-reduced-motion: reduce){
   *{transition:none !important; animation:none !important;}
@@ -574,26 +560,23 @@ footer a{color:var(--accent-deep);}
 </main>
 
 <footer>
-  <div>v3.42 · 数据版本：统编版 2026秋 1-6年级《写字表》（国家中小学智慧教育平台官方教材），共 12 册 2505 字。拼音、组词、部首与结构均已内置（cnchar 词典）；二年级沿用已核验静态数据。个别字目仍留待校项，欢迎指正以便更新。多音字只朗读常用读音，其余读音仅标注。</div>
+  <div>v3.43 · 数据版本：统编版 2026秋 1-6年级《写字表》（国家中小学智慧教育平台官方教材），共 12 册 2505 字。拼音、组词、部首与结构均已内置（cnchar 词典）；二年级沿用已核验静态数据。个别字目仍留待校项，欢迎指正以便更新。多音字只朗读常用读音，其余读音仅标注。</div>
   <div>笔顺动画由 <a href="https://hanziwriter.org/" target="_blank" rel="noopener">HanziWriter</a> 提供，数据来自 hanzi-writer-data；首次点击字卡需要联网加载，之后会缓存。登录后生字本可跨设备同步。</div>
 </footer>
 
 <div id="mask" aria-hidden="true">
   <div id="modal" role="dialog" aria-modal="true" aria-label="字卡详情">
-    <button class="close" id="mClose" aria-label="关闭">✕</button>
-    <div class="modal-top">
-      <div class="char-zone">
-        <div id="writerBox"></div>
-        <div id="strokeInfo"></div>
+    <div class="modal-head">
+      <div class="big hanzi-font" id="mChar"></div>
+      <div class="head-right">
+        <div class="pyrow" id="mPyRow"></div>
+        <div class="meta" id="mExtra"></div>
       </div>
-      <div class="py-zone" id="mPyZone"></div>
-    </div>
-    <div class="modal-meta">
-      <span>部首 <b id="mRadical">—</b></span>
-      <span>笔画 <b id="mStrokes">—</b></span>
-      <span>结构 <b id="mStruct">—</b></span>
+      <button class="close" id="mClose" aria-label="关闭">✕</button>
     </div>
     <div class="modal-body">
+      <div id="writerBox"></div>
+      <div id="strokeInfo"></div>
       <div id="netNote">暂时无法连接笔顺数据源，请检查网络后重试；若持续失败，可换个网络环境再打开。</div>
       <div class="readings" id="mReadings"></div>
       <div class="btn-row">
@@ -1006,30 +989,6 @@ function itemsInOrder(){
   // 按当前筛选结果的顺序，供“上一个/下一个”使用
   return flat.filter(matches);
 }
-function pyZoneHTML(item){
-  const multi = CHAR_DATA.multi ? CHAR_DATA.multi[item.c] : null;
-  let pys = multi ? multi.m.map(r=>r.p) : [item.p || ''];
-  if(multi){
-    const cur = item.p || '';
-    if(cur){
-      const ci = pys.findIndex(p=>p && normPinyin(p)===normPinyin(cur));
-      if(ci>0){ const hit = pys.splice(ci,1)[0]; pys.unshift(hit); }
-    }
-  }
-  const per = window.innerWidth <= 600 ? 2 : 3;
-  const rows = [];
-  for(let i=0;i<pys.length;i+=per) rows.push(pys.slice(i,i+per));
-  return rows.map(row=>{
-    return '<div class="py-row"><span class="py-grid-big">'
-      + row.map(p=>{
-          const r = multi ? multi.m.find(r=>r.p===p) : null;
-          const ws = (r && r.w && r.w.length) ? r.w : [];
-          return '<span class="py-cell"><span class="py-text">'+pyToTonedText(p)+'</span>'
-            + '<button class="sound py-sound" data-py="'+p+'" data-words="'+encodeURIComponent(ws.join('、'))+'" aria-label="朗读 '+p+'">'+SPEAKER_SVG+'</button></span>';
-        }).join('')
-      + '</span></div>';
-  }).join('');
-}
 function speakPinyin(py, wordsText){
   if(!('speechSynthesis' in window)) return;
   speechSynthesis.cancel();
@@ -1045,8 +1004,20 @@ function showModal(key){
   const item = findItem(key);
   if(!item) return;
   current = item;
+  document.getElementById('mChar').textContent = item.c;
   const multi = CHAR_DATA.multi ? CHAR_DATA.multi[item.c] : null;
-  document.getElementById('mPyZone').innerHTML = pyZoneHTML(item);
+  let pys = multi ? multi.m.map(r=>r.p) : [item.p || ''];
+  if(multi && item.p){
+    const ci = pys.findIndex(p=>p && normPinyin(p)===normPinyin(item.p));
+    if(ci>0){ const hit=pys.splice(ci,1)[0]; pys.unshift(hit); }
+  }
+  document.getElementById('mPyRow').innerHTML = pys.map(p=>{
+    const r = multi ? multi.m.find(r=>r.p===p) : null;
+    const ws = (r && r.w && r.w.length) ? r.w : [];
+    return '<span class="py-unit">'+pyGridHTML(p,true)
+      +'<button class="sound py-sound" data-py="'+p+'" data-words="'+encodeURIComponent(ws.join('、'))+'" aria-label="朗读 '+p+'">'+SPEAKER_SVG+'</button></span>';
+  }).join('');
+  document.getElementById('mExtra').innerHTML = '';
   const readings = document.getElementById('mReadings');
   readings.innerHTML = '';
   if(multi){
@@ -1066,15 +1037,17 @@ function showModal(key){
   ensureRadicalLib().then(()=>{
     if(current !== item) return;
     const info = radicalOf(item.c);
-    document.getElementById('mRadical').textContent = (info && info.radical) ? info.radical : '—';
-    document.getElementById('mStruct').textContent = (info && info.struct) ? info.struct : '—';
+    if(info && info.radical){
+      document.getElementById('mExtra').innerHTML = '部首：<b>'+info.radical+'</b>　结构：<b>'+info.struct+'</b>';
+    } else {
+      document.getElementById('mExtra').innerHTML = '部首：<b>—</b>　结构：<b>—</b>';
+    }
   }).catch(()=>{});
   ensureLib().then(()=>{
     if(!window.HanziWriter || current !== item) return;
     return getCharData(item.c).then(d=>{
       if(current !== item) return;
       const strokes = d.strokes;
-      document.getElementById('mStrokes').textContent = strokes.length;
       document.getElementById('strokeInfo').innerHTML = '共 <b>'+strokes.length+'</b> 画 · 点击「再写一遍」可重播动画';
       playAnimation(item);
     });
@@ -1676,7 +1649,7 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
 document.getElementById('mReplay').addEventListener('click', ()=>{
   if(writer && current){ playAnimation(current); }
 });
-document.getElementById('mPyZone').addEventListener('click', e=>{
+document.getElementById('mPyRow').addEventListener('click', e=>{
   const btn = e.target.closest('.py-sound'); if(!btn) return;
   flashSound(btn);
   const py = btn.getAttribute('data-py') || '';
