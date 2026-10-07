@@ -644,10 +644,15 @@ const LESSON_NAMES = {
 };
 function lessonTitle(bk, l){ const m = LESSON_NAMES[bk] && LESSON_NAMES[bk][l]; return m ? l+' '+m : l; }
 let flat = [];
+let CHAR_PY_MAP = {}; // 字→第一个出现的拼音（用于组词拼接）
 function buildFlat(){
   flat = [];
+  CHAR_PY_MAP = {};
   CHAR_DATA.order.forEach(bk=>{
-    CHAR_DATA.books[bk].lessons.forEach(([lesson, chars]) => chars.forEach(([c,p,w]) => flat.push({book:bk, lesson, c, p, w})));
+    CHAR_DATA.books[bk].lessons.forEach(([lesson, chars]) => chars.forEach(([c,p,w]) => {
+      flat.push({book:bk, lesson, c, p, w});
+      if(!CHAR_PY_MAP[c]) CHAR_PY_MAP[c] = p;
+    }));
   });
 }
 function updateStat(){
@@ -1084,16 +1089,26 @@ function findPyEntry(item, py){
   return null;
 }
 function audioUrlsOf(item, py, words){
-  // 返回 [单字音, ...组词音]；单字音直接构造URL（100%覆盖），组词音从AUDIO_DATA取
+  // 返回 [单字音, ...组词音]；单字音直接构造URL（100%覆盖）
+  // 组词音：优先AUDIO_DATA真人录音，没有则用单字音拼接（100%覆盖）
   const urls = [];
   const charUrl = charAudioUrl(py);
   if(charUrl) urls.push(charUrl);
   const e = findPyEntry(item, py);
-  if(e && e.words){
-    (words||[]).slice(0,3).forEach(w=>{
-      if(e.words[w]) urls.push(e.words[w]);
-    });
-  }
+  (words||[]).slice(0,3).forEach(w=>{
+    if(e && e.words && e.words[w]){
+      urls.push(e.words[w]);
+    } else {
+      // 单字音拼接：依次读组词里每个字
+      for(const ch of w){
+        const chPy = CHAR_PY_MAP[ch];
+        if(chPy){
+          const u = charAudioUrl(chPy);
+          if(u) urls.push(u);
+        }
+      }
+    }
+  });
   return urls;
 }
 function speakPinyin(py, wordsText){
