@@ -567,7 +567,7 @@ footer a{color:var(--accent-deep);}
 </main>
 
 <footer>
-  <div>v3.47 · 数据版本：统编版 2026秋 1-6年级《写字表》（国家中小学智慧教育平台官方教材），共 12 册 2505 字。部首数据已通过百度汉语+搜狗汉语双源交叉核对，修正278字。拼音、组词、结构均已内置；多音字只朗读常用读音，其余读音仅标注。</div>
+  <div>v3.49 · 数据版本：统编版 2026秋 1-6年级《写字表》（国家中小学智慧教育平台官方教材），共 12 册 2505 字。发音升级：单字采用搜狗真人录音（按拼音直接构造，100%覆盖），组词有录音时播放真人发音、无录音时跳过；多音字只读本课/常用读音，其余读音仅标注。部首数据已双源核对修正278字。</div>
   <div>笔顺动画由 <a href="https://hanziwriter.org/" target="_blank" rel="noopener">HanziWriter</a> 提供，数据来自 hanzi-writer-data；首次点击字卡需要联网加载，之后会缓存。登录后生字本可跨设备同步。</div>
 </footer>
 
@@ -607,6 +607,7 @@ footer a{color:var(--accent-deep);}
 
 <script>
 let CHAR_DATA = null;
+let AUDIO_DATA = {};   // {字: {拼音: {char: url, words: {组词: url}}}}
 
 async function loadCharData(){
   const r = await fetch('./chars.json');
@@ -614,6 +615,10 @@ async function loadCharData(){
   CHAR_DATA = await r.json();
   CHAR_DATA.order.forEach(bk=>{ CHAR_DATA.labels[bk] = BOOK_LABELS[bk] || CHAR_DATA.labels[bk]; });
   buildFlat();
+  try{
+    const ar = await fetch('./audio.json');
+    if(ar.ok) AUDIO_DATA = await ar.json();
+  }catch(e){ /* 音频数据缺失时回退 Web Speech */ }
 }
 
 const BOOK_LABELS = {
@@ -1004,7 +1009,101 @@ function itemsInOrder(){
   // 按当前筛选结果的顺序，供“上一个/下一个”使用
   return flat.filter(matches);
 }
+/* ---------- 朗读（真人发音 mp3 优先，Web Speech 兜底） ---------- */
+let audioEl = null, audioSeq = 0;
+function stopAllAudio(){
+  audioSeq++;
+  if(audioEl){ try{ audioEl.pause(); audioEl.onended = null; audioEl.onerror = null; }catch(e){} audioEl = null; }
+}
+function playOneAudio(url, onend){
+  return new Promise(resolve=>{
+    const my = audioSeq;
+    const a = new Audio(url);
+    a.preload = 'auto';
+    const done = ()=>{ if(my!==audioSeq) return; if(audioEl===a) audioEl=null; resolve(); };
+    a.onended = done;
+    a.onerror = done;
+    if(audioEl){ try{ audioEl.pause(); }catch(e){} }
+    audioEl = a;
+    a.play().then(()=>{ if(my!==audioSeq){ try{ a.pause(); }catch(e){} } }).catch(done);
+  });
+}
+async function playAudioQueue(urls, onend){
+  if(!urls || !urls.length){ if(onend) onend(); return; }
+  for(const u of urls){
+    if(!u) continue;
+    await playOneAudio(u);
+  }
+  if(onend) onend();
+}
+function normPy(p){ return (p||'').toLowerCase().replace(/[āáǎà]/g,'a').replace(/[ēéěè]/g,'e').replace(/[īíǐì]/g,'i').replace(/[ōóǒò]/g,'o').replace(/[ūúǔù]/g,'u').replace(/[ǖǘǚǜ]/g,'ü').replace(/[ü]/g,'v'); }
+function charAudioUrl(py){
+  // 搜狗单字发音URL规律: https://pic01.sogoucdn.com/s3/a/201033/{无声调拼音}{声调数字}.mp3
+  // 声调数字在末尾; 轻声用5; ü用v
+  if(!py) return '';
+  const vowelMap = {
+    'ā':'a','á':'a','ǎ':'a','à':'a',
+    'ē':'e','é':'e','ě':'e','è':'e',
+    'ī':'i','í':'i','ǐ':'i','ì':'i',
+    'ō':'o','ó':'o','ǒ':'o','ò':'o',
+    'ū':'u','ú':'u','ǔ':'u','ù':'u',
+    'ǖ':'v','ǘ':'v','ǚ':'v','ǜ':'v',
+    'ü':'v'
+  };
+  const toneMap = {
+    'ā':1,'á':2,'ǎ':3,'à':4,
+    'ē':1,'é':2,'ě':3,'è':4,
+    'ī':1,'í':2,'ǐ':3,'ì':4,
+    'ō':1,'ó':2,'ǒ':3,'ò':4,
+    'ū':1,'ú':2,'ǔ':3,'ù':4,
+    'ǖ':1,'ǘ':2,'ǚ':3,'ǜ':4,
+  };
+  let base = '';
+  let tone = 0;
+  for(const ch of py){
+    if(vowelMap[ch]){
+      base += vowelMap[ch];
+      if(toneMap[ch]) tone = toneMap[ch];
+    } else {
+      base += ch;
+    }
+  }
+  if(tone === 0) tone = 5;
+  return 'https://pic01.sogoucdn.com/s3/a/201033/' + base + tone + '.mp3';
+}
+function findPyEntry(item, py){
+  // 优先精确匹配带声调拼音，其次归一化匹配
+  if(!item || !AUDIO_DATA || !AUDIO_DATA[item.c]) return null;
+  const e = AUDIO_DATA[item.c];
+  if(e[py]) return e[py];
+  const np = normPy(py);
+  for(const k in e){ if(normPy(k)===np) return e[k]; }
+  // 只有一个读音时直接返回
+  const keys = Object.keys(e);
+  if(keys.length===1) return e[keys[0]];
+  return null;
+}
+function audioUrlsOf(item, py, words){
+  // 返回 [单字音, ...组词音]；单字音直接构造URL（100%覆盖），组词音从AUDIO_DATA取
+  const urls = [];
+  const charUrl = charAudioUrl(py);
+  if(charUrl) urls.push(charUrl);
+  const e = findPyEntry(item, py);
+  if(e && e.words){
+    (words||[]).slice(0,3).forEach(w=>{
+      if(e.words[w]) urls.push(e.words[w]);
+    });
+  }
+  return urls;
+}
 function speakPinyin(py, wordsText){
+  const words = wordsText ? wordsText.split('、').map(s=>s.trim()).filter(Boolean) : [];
+  stopAllAudio();
+  if(current){
+    const urls = audioUrlsOf(current, py, words);
+    if(urls.length){ playAudioQueue(urls); return; }
+  }
+  // 兜底：Web Speech
   if(!('speechSynthesis' in window)) return;
   speechSynthesis.cancel();
   const text = wordsText ? (py + '，组词：' + wordsText) : py;
@@ -1220,7 +1319,12 @@ function speechTextOf(item){
   return item.c + '。';
 }
 function speakItem(item){
-  if(!item || !('speechSynthesis' in window)) return;
+  if(!item) return;
+  stopAllAudio();
+  const urls = audioUrlsOf(item, item.p, item.w);
+  if(urls.length){ playAudioQueue(urls); return; }
+  // 兜底：Web Speech
+  if(!('speechSynthesis' in window)) return;
   speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(speechTextOf(item));
   u.lang = 'zh-CN';
@@ -1400,7 +1504,7 @@ function dictUpdateCount(){
 }
 function dictOpenSetup(){
   // 若正在听写, 先停止, 避免朗读叠加
-  if(D){ seq++; speechSynthesis.cancel(); clearTimeout(D.timer); D.running = false; D = null; }
+  if(D){ seq++; stopAllAudio(); speechSynthesis.cancel(); clearTimeout(D.timer); D.running = false; D = null; }
   document.getElementById('dStatusTip').textContent = '';
   showView('dictsetup');
   dictRenderLessons();
@@ -1458,9 +1562,23 @@ function mkDictU(text, onend){
   return u;
 }
 function dictSpeak(text, onend){
-  // 语音引擎每次朗读开头可能轻微渐入: 先用近静音占位"唤醒"引擎再正式朗读
+  // 真人发音 mp3 优先；text 为汉字时读字+组词，为提示语时用 Web Speech
   const s = seq;
   let done = false;
+  const isCharText = text && text.length <= 2 && /^[\u4e00-\u9fff]+$/.test(text.trim());
+  if(isCharText && D){
+    const item = D.items[D.i];
+    const urls = audioUrlsOf(item, item.p, item.w);
+    if(urls.length){
+      playAudioQueue(urls, ()=>{
+        if(done || s!==seq || !D || D.paused || !D.running) return;
+        done = true;
+        if(onend) onend();
+      });
+      return;
+    }
+  }
+  // 以下为 Web Speech 兜底
   const go = ()=>{
     if(done || s!==seq || !D || D.paused || !D.running) return;
     done = true;
@@ -1476,7 +1594,7 @@ function dictSpeak(text, onend){
   p.onend = go;
   p.onerror = go;
   speechSynthesis.speak(p);
-  // 兜底: 个别引擎占位可能不触发回调, 1.5 秒后强制进入正式朗读
+  // 兜底: 占位不触发回调时 1.5 秒后强制进入正式朗读
   setTimeout(()=>{
     if(done || s!==seq || !D || D.paused || !D.running) return;
     done = true;
@@ -1499,7 +1617,7 @@ function dictPlay(){
   document.getElementById('dBigHint').textContent = '听写第 '+(D.i+1)+' 字';
   dictSetStatus('朗读「'+item.c+'」 第 '+(D.round+1)+' 遍');
   dictUpdWrongBtn();
-  dictSpeak(speechTextOf(item), ()=>{ if(s!==seq||!D||D.paused||!D.running) return; dictOnEnd(); });
+  dictSpeak(item.c, ()=>{ if(s!==seq||!D||D.paused||!D.running) return; dictOnEnd(); });
 }
 function dictUpdWrongBtn(){
   const b = document.getElementById('dWrong');
@@ -1548,6 +1666,7 @@ function dictTogglePause(){
   if(!D.paused){
     seq++;
     D.paused = true;
+    stopAllAudio();
     speechSynthesis.cancel();
     clearTimeout(D.timer); D.timer = null;
     if(D.phase==='wait' || D.phase==='nextwait'){
@@ -1571,20 +1690,23 @@ function dictTogglePause(){
 function dictSkip(){
   if(!D) return;
   seq++;
-  speechSynthesis.cancel();
+  stopAllAudio();
+    speechSynthesis.cancel();
   clearTimeout(D.timer); D.timer = null;
   dictNext();
 }
 function dictReplay(){
   if(!D) return;
   seq++;
-  speechSynthesis.cancel();
+  stopAllAudio();
+    speechSynthesis.cancel();
   clearTimeout(D.timer); D.timer = null;
   D.round = 0;
   dictPlay();
 }
 function dictExit(){
-  if(D){ seq++; speechSynthesis.cancel(); clearTimeout(D.timer); D.running = false; D = null; }
+  if(D){ seq++; stopAllAudio();
+    speechSynthesis.cancel(); clearTimeout(D.timer); D.running = false; D = null; }
   showView('cards');
 }
 function dictDone(){
