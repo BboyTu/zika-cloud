@@ -774,7 +774,10 @@ function pyGridHTML(py,small){
   const s=splitPy(py);
   const H=small?26:40, F=small?19:30, sc=F/30;
   const l2=small?6:10, l3=small?20:30;
-  let html='<span class="py-grid" style="--l2:'+l2+'px;--l3:'+l3+'px;height:'+H+'px">';
+  let totalW=0;
+  s.letters.forEach(function(L){ totalW += (PY_ADV[L.c]||.55)*F; });
+  const gridW = totalW + 16;
+  let html='<span class="py-grid" style="--l2:'+l2+'px;--l3:'+l3+'px;height:'+H+'px;width:'+gridW.toFixed(2)+'px">';
   html+='<i></i><i></i><i></i><i></i>';
   let x=0, toneX=null;
   s.letters.forEach(function(L,i){
