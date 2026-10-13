@@ -1142,7 +1142,7 @@ function showModal(key){
   }
   document.getElementById('mPyRow').innerHTML = pys.map(p=>{
     const r = multi ? multi.m.find(r=>r.p===p) : null;
-    const ws = (r && r.w && r.w.length) ? r.w : [];
+    const ws = (r && r.w && r.w.length) ? r.w : (item.w || []);
     return '<span class="py-unit">'+pyGridHTML(p,true)
       +'<button class="sound py-sound" data-py="'+p+'" data-words="'+encodeURIComponent(ws.join('、'))+'" aria-label="朗读 '+p+'">'+SPEAKER_SVG+'</button></span>';
   }).join('');
