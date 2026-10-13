@@ -567,7 +567,7 @@ footer a{color:var(--accent-deep);}
 </main>
 
 <footer>
-  <div>v3.49 · 数据版本：统编版 2026秋 1-6年级《写字表》（国家中小学智慧教育平台官方教材），共 12 册 2505 字。发音升级：单字采用搜狗真人录音（按拼音直接构造，100%覆盖），组词有录音时播放真人发音、无录音时跳过；多音字只读本课/常用读音，其余读音仅标注。部首数据已双源核对修正278字。</div>
+  <div>v3.52 · 数据版本：统编版 2026秋 1-6年级《写字表》（国家中小学智慧教育平台官方教材），共 12 册 2505 字。发音升级：单字采用搜狗真人录音（100%覆盖）；组词全部采用整词连贯发音（搜狗真人录音3010词 + 百度整词发音1227词，共4237词），不再逐字拼接；多音字只读本课/常用读音，其余读音仅标注。部首数据已双源核对修正278字。</div>
   <div>笔顺动画由 <a href="https://hanziwriter.org/" target="_blank" rel="noopener">HanziWriter</a> 提供，数据来自 hanzi-writer-data；首次点击字卡需要联网加载，之后会缓存。登录后生字本可跨设备同步。</div>
 </footer>
 
@@ -608,6 +608,7 @@ footer a{color:var(--accent-deep);}
 <script>
 let CHAR_DATA = null;
 let AUDIO_DATA = {};   // {字: {拼音: {char: url, words: {组词: url}}}}
+let WORD_AUDIO = {};  // {组词: 整词发音URL（搜狗真人或百度整词）}
 
 async function loadCharData(){
   const r = await fetch('./chars.json');
@@ -619,6 +620,10 @@ async function loadCharData(){
     const ar = await fetch('./audio.json');
     if(ar.ok) AUDIO_DATA = await ar.json();
   }catch(e){ /* 音频数据缺失时回退 Web Speech */ }
+  try{
+    const wr = await fetch('./word_audio.json');
+    if(wr.ok) WORD_AUDIO = await wr.json();
+  }catch(e){ /* 组词词库缺失时回退拼接 */ }
 }
 
 const BOOK_LABELS = {
@@ -1096,10 +1101,16 @@ function audioUrlsOf(item, py, words){
   if(charUrl) urls.push(charUrl);
   const e = findPyEntry(item, py);
   (words||[]).slice(0,3).forEach(w=>{
-    if(e && e.words && e.words[w]){
+    // 1) 优先整词发音：词库 WORD_AUDIO（搜狗真人/百度整词）
+    if(WORD_AUDIO && WORD_AUDIO[w]){
+      urls.push(WORD_AUDIO[w]);
+    }
+    // 2) 旧版字表 AUDIO_DATA 中的整词真人录音
+    else if(e && e.words && e.words[w]){
       urls.push(e.words[w]);
-    } else {
-      // 单字音拼接：依次读组词里每个字
+    }
+    // 3) 兜底：单字音拼接（依次读组词里每个字）
+    else {
       for(const ch of w){
         const chPy = CHAR_PY_MAP[ch];
         if(chPy){
